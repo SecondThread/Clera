@@ -119,13 +119,16 @@ public class Window {
 			}
 		}
 		Color peakColor = Color.red, targetColor = Color.green;
+		
 		if (peaks!=null) {
 			for (Point peak : peaks) {
-				toDraw.setRGB(peak.x, peak.y, peakColor.getRGB());
-				toDraw.setRGB(peak.x - 1, peak.y, peakColor.getRGB());
-				toDraw.setRGB(peak.x + 1, peak.y, peakColor.getRGB());
-				toDraw.setRGB(peak.x, peak.y - 1, peakColor.getRGB());
-				toDraw.setRGB(peak.x, peak.y + 1, peakColor.getRGB());
+				if (peak.x>1&&peak.y>1&&peak.x+2<pixels.length&&peak.y+2<pixels[0].length) {
+					toDraw.setRGB(peak.x, peak.y, peakColor.getRGB());
+					toDraw.setRGB(peak.x - 1, peak.y, peakColor.getRGB());
+					toDraw.setRGB(peak.x + 1, peak.y, peakColor.getRGB());
+					toDraw.setRGB(peak.x, peak.y - 1, peakColor.getRGB());
+					toDraw.setRGB(peak.x, peak.y + 1, peakColor.getRGB());
+				}
 			}
 		}
 
