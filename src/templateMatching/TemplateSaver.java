@@ -1,6 +1,5 @@
 package templateMatching;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -11,6 +10,8 @@ import saving.FileLoader;
 import saving.ScreenSetup;
 
 public class TemplateSaver {
+	private static final boolean normalizeTemplates=true;
+	
 	public static void saveTemplates(ArrayList<Template> templates, String fileName) {
 		String total="";
 		for (Template t:templates) {
@@ -23,7 +24,9 @@ public class TemplateSaver {
 		ArrayList<Template> toReturn=new ArrayList<Template>();
 		String[] file=FileLoader.readFile(fileName);
 		for (String s:file) {
-			toReturn.add(new Template(s));
+			Template toAdd=new Template(s);
+			if (normalizeTemplates) toAdd.normalize();
+			toReturn.add(toAdd);
 		}
 		return toReturn;
 	}
@@ -33,7 +36,7 @@ public class TemplateSaver {
 		ScreenSetup.loadData();
 		Window.init();
 		while (true) {
-			System.out.println("Type command: \"view\", \"remove\", \"view all\", \"add\", \"clear\", \"exit\"");
+			System.out.println("Type command: \"view\", \"remove\", \"remove all\", \"view all\", \"add\", \"clear\", \"exit\"");
 			String command=s.nextLine();
 			int index=-1;
 			switch (command) {
@@ -53,6 +56,10 @@ public class TemplateSaver {
 					templates.remove(index);
 					saveTemplates(templates, fileName);
 					break;
+				case "remove all":
+					templates.clear();
+					saveTemplates(templates, fileName);
+					break;
 				case "view all":
 					oldUseSameWindow=Main.useSameWindow;
 					Main.useSameWindow=false;
@@ -65,12 +72,13 @@ public class TemplateSaver {
 					for (int i=0; i<100; i++)
 						System.out.println();
 					break;
+				case "":
 				case "add":
 					float[][] window=Window.getPixels(ScreenSetup.pictureStartX, ScreenSetup.pictureStartY, ScreenSetup.pictureEndX, ScreenSetup.pictureEndY);
 					window=ImageProcessor.scaleImage(window, Main.sizeOfImage);
-					Window.displayPixels(window, "Create Template");
+					Window.displayPixels(window, "Create Template", false);
 					System.out.println("Click on the corner");
-					ScreenSetup.stop(8);
+					ScreenSetup.stop(5);
 					System.out.println("Thanks");
 					templates.add(TemplateCreator.createTemplate(window));
 					saveTemplates(templates, fileName);

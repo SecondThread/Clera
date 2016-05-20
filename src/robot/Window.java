@@ -145,7 +145,9 @@ public class Window {
 
 	private static void drawImage(BufferedImage i, String pictureName, boolean exitOnClose) {
 		if (!Main.useSameWindow || panel == null) {
-			panel = new JPanel();
+			JPanel panel = new JPanel();
+			if (Main.useSameWindow)
+				Window.panel=panel;
 			panel.setPreferredSize(new Dimension(i.getWidth(), i.getHeight()));
 			lastWindowCreated=panel;
 			lastWindowCreated.addMouseListener(new MouseListener() {
@@ -178,11 +180,15 @@ public class Window {
 			else frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			frame.setVisible(true);
 			ScreenSetup.stop(.1);
+			Graphics graphics = panel.getGraphics();
+			graphics.drawImage(i, 0, 0, null);
+			graphics.dispose();
 		}
-
-		Graphics graphics = panel.getGraphics();
-		graphics.drawImage(i, 0, 0, null);
-		graphics.dispose();
+		else {
+			Graphics graphics = panel.getGraphics();
+			graphics.drawImage(i, 0, 0, null);
+			graphics.dispose();
+		}
 	}
 
 	public static float getAverageInputColor() {

@@ -1,7 +1,11 @@
 package robot;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Point;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import processing.ImageProcessor;
@@ -16,19 +20,21 @@ public class Main {
 	
 	private static final String topLeftTemplatesLocation="templates.txt", topRightTemplatesLocation="templatesTR.txt",
 					bottomRightTemplatesLocation="templatesBR.txt", bottomLeftTemplatesLocation="templatesBL.txt";
+	private static final String templateLocationToPracticeWith=topLeftTemplatesLocation;
 	public static final int sizeOfImage=300;
 	
 	private static Point lastTopLeftCenter=new Point(0, 0), lastTopRightCenter=new Point(0, 0), lastBottomLeftCenter=new Point(0, 0), lastBottomRightCenter=new Point(0, 0);
 	private static float lastConfidence=0f, lastTopLeftConfidence=0f, lastTopRightConfidence=0f, lastBottomLeftConfidence=0f, lastBottomRightConfidence=0f;
-	private static final float minConfidenceToStay=0.999f;
+	private static final float minConfidenceToStay=0.9993f;
 	private static final int moveFrameRangeX=60, moveFrameRangeY=40;
+	private static float[][] lastImage;
 	
 	public static void main(String[] args) {
 		if (setupPicturePosition) {
 			ScreenSetup.setupScreen();
 		}
 		else if (editTemplates) {
-			TemplateSaver.templateRunner(TemplateSaver.loadTemplates(bottomLeftTemplatesLocation), bottomLeftTemplatesLocation);
+			TemplateSaver.templateRunner(TemplateSaver.loadTemplates(templateLocationToPracticeWith), templateLocationToPracticeWith);
 		}
 		else {
 			ScreenSetup.loadData();
@@ -55,8 +61,8 @@ public class Main {
 		
 		lastTopLeftCenter=findCenter(pixels, topLeftTemplatesLocation, lastTopLeftCenter, lastTopLeftConfidence);
 		lastTopLeftConfidence=lastConfidence;
-		lastTopRightCenter=findCenter(pixels, topRightTemplatesLocation, lastTopRightCenter, lastTopRightConfidence);
-		lastTopRightConfidence=lastConfidence;
+		//lastTopRightCenter=findCenter(pixels, topRightTemplatesLocation, lastTopRightCenter, lastTopRightConfidence);
+		//lastTopRightConfidence=lastConfidence;
 		//lastBottomLeftCenter=findCenter(pixels, bottomLeftTemplatesLocation, lastBottomLeftCenter);
 		//lastBottomLeftConfidence=lastConfidence;
 		//lastBottomRightCenter=findCenter(pixels, bottomRightTemplatesLocation, lastBottomRightCenter);
@@ -109,6 +115,32 @@ public class Main {
 		return new Point(lastCenter.x+moveFrameRangeX, lastCenter.y+moveFrameRangeY);
 	}
 
+	private static boolean runTrumpMotionSensor() {
+		if (lastImage==null) {
+			lastImage=Window.getPixels(ScreenSetup.pictureStartX, ScreenSetup.pictureStartY, ScreenSetup.pictureEndX, ScreenSetup.pictureEndY);
+		}
+		float[][] currentImage=Window.getPixels(ScreenSetup.pictureStartX, ScreenSetup.pictureStartY, ScreenSetup.pictureEndX, ScreenSetup.pictureEndY);
+		float totalDifference=0;
+		for (int x=0; x<currentImage.length; x++) {
+			for (int y=0; y<currentImage[x].length; y++) {
+				totalDifference+=Math.abs(currentImage[x][y]-lastImage[x][y]);
+			}
+		}
+		if (totalDifference>2000) {
+			System.out.println(System.nanoTime());
+			try {
+				Desktop.getDesktop().browse(new URI("https://www.youtube.com/watch?v=RDrfE9I8_hs"));
+				return true;
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+		}
+		lastImage=currentImage;
+		return false;
+	}
+	
 	/*
 	private static ArrayList<Point> getTopLeftCorners(float[][] pixels, boolean[][] cutoff) {
 		float[][] corners=ShapeFinder.getPointsWithTopLeftCorner(cutoff);

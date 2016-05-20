@@ -1,6 +1,7 @@
 package processing;
 
 import java.awt.Color;
+import java.awt.Point;
 
 public class ImageProcessor {
 	
@@ -88,6 +89,17 @@ public class ImageProcessor {
 				image[x][y]=(oldValue-min)/(max-min);
 			}
 		}
+	}
+	
+	public static float[][] normalize(float[][] image, Point startPoint, Point endPoint) {
+		float[][] toReturn=new float[endPoint.x-startPoint.x][endPoint.y-startPoint.y];
+		for (int x=0; x<toReturn.length; x++) {
+			for (int y=0; y<toReturn[x].length; y++) {
+				toReturn[x][y]=image[x+startPoint.x][y+startPoint.y];
+			}
+		}
+		normalize(toReturn);
+		return toReturn;
 	}
 	
 }

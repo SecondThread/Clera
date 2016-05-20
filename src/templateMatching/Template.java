@@ -2,6 +2,8 @@ package templateMatching;
 
 import java.awt.Point;
 
+import processing.ImageProcessor;
+
 public class Template {
 	private float[][] template;
 	
@@ -26,17 +28,22 @@ public class Template {
 		}
 	}
 	
+	private Template(float[][] rawImage) {
+		this.template=rawImage;
+	}
 	
 	//returns the percent match of the template
 	public float matchTemplate(float[][] image, int topLeftX, int topLeftY) {
+		
 		if (template.length+topLeftX>=image.length||template[0].length+topLeftY>=image[0].length) {
 			return 0;
 		}
+		float[][] toMatch=ImageProcessor.normalize(image, new Point(topLeftX, topLeftY), new Point(topLeftX+template.length, topLeftY+template[0].length));
 		
 		float totalError=0;
 		for (int x=0; x<template.length; x++) {
 			for (int y=0; y<template[x].length&&y+topLeftY<image[x].length; y++) {
-				totalError+=Math.abs(image[topLeftX+x][topLeftY+y]-template[x][y]);
+				totalError+=Math.abs(toMatch[x][y]-template[x][y]);
 			}
 		}
 		return 1-totalError/(image.length*image[0].length);
@@ -56,5 +63,8 @@ public class Template {
 	public float[][] getTemplate() {
 		return template;
 	}
-
+	
+	public void normalize() {
+		ImageProcessor.normalize(template);
+	}
 }
