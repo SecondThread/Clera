@@ -28,10 +28,6 @@ public class Template {
 		}
 	}
 	
-	private Template(float[][] rawImage) {
-		this.template=rawImage;
-	}
-	
 	//returns the percent match of the template
 	public float matchTemplate(float[][] image, int topLeftX, int topLeftY) {
 		
@@ -39,6 +35,26 @@ public class Template {
 			return 0;
 		}
 		float[][] toMatch=ImageProcessor.normalize(image, new Point(topLeftX, topLeftY), new Point(topLeftX+template.length, topLeftY+template[0].length));
+		
+		float totalError=0;
+		for (int x=0; x<template.length; x++) {
+			for (int y=0; y<template[x].length&&y+topLeftY<image[x].length; y++) {
+				totalError+=Math.abs(toMatch[x][y]-template[x][y]);
+			}
+		}
+		return 1-totalError/(image.length*image[0].length);
+	}
+	
+	public float matchTemplateWithoutNormalizing(float[][] image, int topLeftX, int topLeftY) {
+		if (template.length+topLeftX>=image.length||template[0].length+topLeftY>=image[0].length) {
+			return 0;
+		}
+		float[][] toMatch=new float[template.length][template[0].length];
+		for (int x=0; x<toMatch.length; x++) {
+			for (int y=0; y<toMatch[x].length; y++) {
+				toMatch[x][y]=image[x+topLeftX][y+topLeftY];
+			}
+		}
 		
 		float totalError=0;
 		for (int x=0; x<template.length; x++) {

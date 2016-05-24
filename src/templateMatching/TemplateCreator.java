@@ -5,11 +5,14 @@ import java.awt.Point;
 import robot.Window;
 
 public class TemplateCreator {
+	
+	public static final int templateWidth=20;
+	
 	public static Template createTemplate(float[][] image) {
 		int centerX=Window.lastClickX;
 		int centerY=Window.lastClickY;
-		Point topLeftCorner=new Point(centerX-14, centerY-14);
-		Point bottomRightCorner=new Point(centerX+14, centerY+14);
+		Point topLeftCorner=new Point(centerX-templateWidth/2, centerY-templateWidth/2);
+		Point bottomRightCorner=new Point(centerX+templateWidth/2, centerY+templateWidth/2);
 		return new Template(image, topLeftCorner, bottomRightCorner);
 	}
 }

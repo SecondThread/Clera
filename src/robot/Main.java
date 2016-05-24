@@ -18,16 +18,16 @@ public class Main {
 	private static boolean displayFinalPicture=true;
 	public static boolean useSameWindow=true;
 	
-	private static final String topLeftTemplatesLocation="templates.txt", topRightTemplatesLocation="templatesTR.txt",
+	public static final String topLeftTemplatesLocation="templates.txt", topRightTemplatesLocation="templatesTR.txt",
 					bottomRightTemplatesLocation="templatesBR.txt", bottomLeftTemplatesLocation="templatesBL.txt";
 	private static final String templateLocationToPracticeWith=topLeftTemplatesLocation;
 	public static final int sizeOfImage=300;
 	
-	private static Point lastTopLeftCenter=new Point(0, 0), lastTopRightCenter=new Point(0, 0), lastBottomLeftCenter=new Point(0, 0), lastBottomRightCenter=new Point(0, 0);
-	private static float lastConfidence=0f, lastTopLeftConfidence=0f, lastTopRightConfidence=0f, lastBottomLeftConfidence=0f, lastBottomRightConfidence=0f;
-	private static final float minConfidenceToStay=0.9993f;
-	private static final int moveFrameRangeX=60, moveFrameRangeY=40;
-	private static float[][] lastImage;
+	private static final RecenterThread recenterThread=new RecenterThread();
+	private static boolean startedThread=false;
+	private static Point lastCenter=null;
+	private static Color[][] recenterImage;
+	private static float[][] recenterPixels;
 	
 	public static void main(String[] args) {
 		if (setupPicturePosition) {
@@ -45,7 +45,7 @@ public class Main {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				main(null);
+				//main(null);
 			}
 		}
 	}
@@ -57,35 +57,47 @@ public class Main {
 
 		float[][] pixels=Window.getPixels(ScreenSetup.pictureStartX, ScreenSetup.pictureStartY, ScreenSetup.pictureEndX, ScreenSetup.pictureEndY);
 		pixels=ImageProcessor.scaleImage(pixels, sizeOfImage);
-		Color[][] oldPixels=ImageProcessor.scaleImage(Window.getLastImage(), sizeOfImage);
+		Color[][] oldImage=ImageProcessor.scaleImage(Window.getLastImage(), sizeOfImage);
+			
+		if (recenterThread.lastCenter!=null) {
+			Point newCenter=recenterThread.lastCenter;
+			if (lastCenter!=newCenter) {
+				lastCenter=newCenter;
+				SecondThread.setImage(recenterPixels);
+				SecondThread.setCenterOfCorner(newCenter);
+				SecondThread.setImage(pixels);
+				SecondThread.searchAllPixels();
+				recenterThread.setPixels(pixels);
+				recenterPixels=pixels;
+				recenterImage=oldImage;
+			} 
+			else {
+				SecondThread.setImage(pixels);				
+			}
+			SecondThread.search();
+			ArrayList<Point> peaks=new ArrayList<Point>();
+			peaks.add(SecondThread.getCenter());
+			if (displayFinalPicture) Window.displayPixelsWithPeaks(oldImage, peaks, peaks.get(0), "asdfd");
+			//SecondThread.setCenterOfCorner(lastCenter);
+		}
 		
-		lastTopLeftCenter=findCenter(pixels, topLeftTemplatesLocation, lastTopLeftCenter, lastTopLeftConfidence);
-		lastTopLeftConfidence=lastConfidence;
-		//lastTopRightCenter=findCenter(pixels, topRightTemplatesLocation, lastTopRightCenter, lastTopRightConfidence);
-		//lastTopRightConfidence=lastConfidence;
-		//lastBottomLeftCenter=findCenter(pixels, bottomLeftTemplatesLocation, lastBottomLeftCenter);
-		//lastBottomLeftConfidence=lastConfidence;
-		//lastBottomRightCenter=findCenter(pixels, bottomRightTemplatesLocation, lastBottomRightCenter);
-		//lastBottomRightConfidence=lastConfidence;
-		
-		ArrayList<Point> peaks=new ArrayList<Point>();
-		peaks.add(lastTopLeftCenter);
-		peaks.add(lastBottomLeftCenter);
-		peaks.add(lastTopRightCenter);
-		peaks.add(lastBottomRightCenter);
-		if (displayFinalPicture) Window.displayPixelsWithPeaks(oldPixels, peaks, lastTopLeftCenter, "asdfd");
+		if (!startedThread) {
+			(new Thread(recenterThread)).start();
+			startedThread=true;
+			recenterThread.setPixels(pixels);
+			recenterPixels=pixels;
+			recenterImage=oldImage;
+		}
 		System.out.println("Took "+(0.0+System.currentTimeMillis()-startTime)/1000+" seconds.");
-		System.out.println(lastConfidence);
 	}
 	
-	private static Point findCenter(float[][] pixels, String templateLocation, Point lastCenter, float lastConfidence) {
+	public static Point findCenter(float[][] pixels, String templateLocation, Point lastCenter) {
 		ArrayList<Template> templates=TemplateSaver.loadTemplates(templateLocation);
 		float maxConfidence=0;
 		Point bestCenter=new Point(0,0);
-		Point topLeftCorner=getTopLeftSearchPoint(lastCenter, lastConfidence);
-		Point bottomRightCorner=getBottomRightSearchPoint(lastCenter, lastConfidence, pixels);
-		for (int x=topLeftCorner.x; x<bottomRightCorner.x; x++) {
-			for (int y=topLeftCorner.y; y<bottomRightCorner.y; y++) {
+
+		for (int x=0; x<pixels.length; x++) {
+			for (int y=0; y<pixels[x].length; y++) {
 				for (Template t:templates) {
 					float currentMatch=t.matchTemplate(pixels, x, y);
 					if (currentMatch>maxConfidence) {
@@ -95,50 +107,7 @@ public class Main {
 				}
 			}
 		}
-		Main.lastConfidence=maxConfidence;
 		return bestCenter;
-	}
-	
-	private static Point getTopLeftSearchPoint(Point lastCenter, float lastConfidence) {
-		if (lastConfidence<minConfidenceToStay) {
-			System.out.println("Bad "+lastConfidence);
-			return new Point(0, 0);
-		}
-		System.out.println("Good");
-		return new Point(Math.max(0, lastCenter.x-moveFrameRangeX), Math.max(0, lastCenter.y-moveFrameRangeY));
-	}
-	
-	private static Point getBottomRightSearchPoint(Point lastCenter, float lastConfidence, float[][] pixels) {
-		if (lastConfidence<minConfidenceToStay) {
-			return new Point(pixels.length, pixels[0].length);
-		}
-		return new Point(lastCenter.x+moveFrameRangeX, lastCenter.y+moveFrameRangeY);
-	}
-
-	private static boolean runTrumpMotionSensor() {
-		if (lastImage==null) {
-			lastImage=Window.getPixels(ScreenSetup.pictureStartX, ScreenSetup.pictureStartY, ScreenSetup.pictureEndX, ScreenSetup.pictureEndY);
-		}
-		float[][] currentImage=Window.getPixels(ScreenSetup.pictureStartX, ScreenSetup.pictureStartY, ScreenSetup.pictureEndX, ScreenSetup.pictureEndY);
-		float totalDifference=0;
-		for (int x=0; x<currentImage.length; x++) {
-			for (int y=0; y<currentImage[x].length; y++) {
-				totalDifference+=Math.abs(currentImage[x][y]-lastImage[x][y]);
-			}
-		}
-		if (totalDifference>2000) {
-			System.out.println(System.nanoTime());
-			try {
-				Desktop.getDesktop().browse(new URI("https://www.youtube.com/watch?v=RDrfE9I8_hs"));
-				return true;
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-			}
-		}
-		lastImage=currentImage;
-		return false;
 	}
 	
 	/*
