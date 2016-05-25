@@ -6,7 +6,7 @@ import robot.Window;
 
 public class TemplateCreator {
 	
-	public static final int templateWidth=20;
+	public static final int templateWidth=12;
 	
 	public static Template createTemplate(float[][] image) {
 		int centerX=Window.lastClickX;

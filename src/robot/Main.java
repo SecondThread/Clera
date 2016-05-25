@@ -17,8 +17,8 @@ public class Main implements Runnable{
 	
 	public static final String topLeftTemplatesLocation="templates.txt", topRightTemplatesLocation="templatesTR.txt",
 					bottomRightTemplatesLocation="templatesBR.txt", bottomLeftTemplatesLocation="templatesBL.txt";
-	private static final String templateLocationToPracticeWith=topRightTemplatesLocation;
-	public static final int sizeOfImage=300;
+	private static final String templateLocationToPracticeWith=bottomRightTemplatesLocation;
+	public static final int sizeOfImage=200;
 	
 	private static final RecenterThread recenterThread=new RecenterThread();
 	private static boolean startedThread=false;
@@ -26,7 +26,7 @@ public class Main implements Runnable{
 	private static Color[][] recenterImage;
 	private static float[][] recenterPixels;
 	
-	private static int paperWidth=130;
+	private static int paperWidth=(int)(130*2/3f);
 	private static float paperWidthOverHeight=22/14.3f;
 	
 	private static volatile Point topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner;
