@@ -3,6 +3,7 @@ package robot;
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -30,6 +31,7 @@ public class Window {
 	private static int x = 0, y = 50;
 	
 	private static JPanel lastWindowCreated=null;
+	private static JFrame frame;
 	public static int lastClickX, lastClickY;
 	
 	public static void init() {
@@ -140,7 +142,7 @@ public class Window {
 			}
 		}
 		}
-		drawImage(toDraw, pictureName, true);
+		drawImage(toDraw, pictureName, true, true);
 	}
 
 	private static float[][] flipImageHorizontally(float[][] toFlip) {
@@ -164,6 +166,10 @@ public class Window {
 	}
 	
 	private static void drawImage(BufferedImage i, String pictureName, boolean exitOnClose) {
+		drawImage(i, pictureName, exitOnClose, false);
+	}
+	
+	private static void drawImage(BufferedImage i, String pictureName, boolean exitOnClose, boolean fullScreen) {
 		if (!Main.useSameWindow || panel == null) {
 			JPanel panel = new JPanel();
 			if (Main.useSameWindow)
@@ -180,7 +186,7 @@ public class Window {
 				public void mouseEntered(MouseEvent e) {}
 				public void mouseExited(MouseEvent e) {}
 			});
-			JFrame frame = new JFrame();
+			frame = new JFrame();
 			frame.setTitle(pictureName);
 			frame.add(panel);
 			frame.pack();
@@ -188,7 +194,7 @@ public class Window {
 			if (!Main.useSameWindow) {
 				frame.setLocation(x, y);
 			} else {
-				frame.setLocation(1000, 200);
+				frame.setLocation(100, 200);
 			}
 			x += i.getWidth();
 			if (x > i.getWidth() * 3) {
@@ -205,8 +211,19 @@ public class Window {
 			graphics.dispose();
 		}
 		else {
+			if (fullScreen) {
+				if (panel.getWidth()<500) {
+					panel.setPreferredSize(new Dimension(500, 500*i.getHeight()/i.getWidth()));
+				}
+				frame.pack();
+			}
 			Graphics graphics = panel.getGraphics();
-			graphics.drawImage(i, 0, 0, null);
+			if (fullScreen) {
+				graphics.drawImage(i, 0, 0, panel.getWidth(), panel.getHeight(), null);
+			}
+			else {
+				graphics.drawImage(i, 0, 0, null);
+			}
 			graphics.dispose();
 		}
 	}
