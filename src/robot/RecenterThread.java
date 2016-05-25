@@ -14,7 +14,7 @@ public class RecenterThread implements Runnable {
 			if (processFlag) {
 				processFlag=false;
 				float[][] currentPixels=pixels;
-				lastCenter=Main.findCenter(currentPixels, Main.topLeftTemplatesLocation, lastCenter);
+				lastCenter=Main.findCenter(currentPixels, Main.topLeftTemplatesLocation);
 			}
 		}
 	}

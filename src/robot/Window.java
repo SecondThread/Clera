@@ -143,6 +143,26 @@ public class Window {
 		drawImage(toDraw, pictureName, true);
 	}
 
+	private static float[][] flipImageHorizontally(float[][] toFlip) {
+		float[][] toReturn=new float[toFlip.length][toFlip[0].length];
+		for (int x=0; x<toReturn.length; x++) {
+			for (int y=0; y<toReturn[x].length; y++) {
+				toReturn[x][y]=toFlip[toFlip.length-1-x][y];
+			}
+		}
+		return toReturn;
+	}
+	
+	private static Color[][] flipImageHorizontally(Color[][] toFlip) {
+		Color[][] toReturn=new Color[toFlip.length][toFlip[0].length];
+		for (int x=0; x<toReturn.length; x++) {
+			for (int y=0; y<toReturn[x].length; y++) {
+				toReturn[x][y]=toFlip[toFlip.length-1-x][y];
+			}
+		}
+		return toReturn;
+	}
+	
 	private static void drawImage(BufferedImage i, String pictureName, boolean exitOnClose) {
 		if (!Main.useSameWindow || panel == null) {
 			JPanel panel = new JPanel();

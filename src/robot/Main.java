@@ -1,26 +1,23 @@
 package robot;
 
 import java.awt.Color;
-import java.awt.Desktop;
 import java.awt.Point;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
+import images.ImageLoader;
 import processing.ImageProcessor;
 import saving.ScreenSetup;
 import templateMatching.Template;
 import templateMatching.TemplateSaver;
 
-public class Main {
+public class Main implements Runnable{
 	private static boolean setupPicturePosition=false, editTemplates=false;
 	private static boolean displayFinalPicture=true;
 	public static boolean useSameWindow=true;
 	
 	public static final String topLeftTemplatesLocation="templates.txt", topRightTemplatesLocation="templatesTR.txt",
 					bottomRightTemplatesLocation="templatesBR.txt", bottomLeftTemplatesLocation="templatesBL.txt";
-	private static final String templateLocationToPracticeWith=topLeftTemplatesLocation;
+	private static final String templateLocationToPracticeWith=topRightTemplatesLocation;
 	public static final int sizeOfImage=300;
 	
 	private static final RecenterThread recenterThread=new RecenterThread();
@@ -29,23 +26,17 @@ public class Main {
 	private static Color[][] recenterImage;
 	private static float[][] recenterPixels;
 	
+	private static int paperWidth=130;
+	private static float paperWidthOverHeight=22/14.3f;
+	
+	private static volatile Point topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner;
+	private static volatile Color[][] lastImage;
+	
 	public static void main(String[] args) {
-		if (setupPicturePosition) {
-			ScreenSetup.setupScreen();
-		}
-		else if (editTemplates) {
-			TemplateSaver.templateRunner(TemplateSaver.loadTemplates(templateLocationToPracticeWith), templateLocationToPracticeWith);
-		}
-		else {
-			ScreenSetup.loadData();
-			Window.init();
-			try {
-				for (int i=0; i<10000000; i++) {
-					runProgram();
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				//main(null);
+		(new Thread(new Main())).start();
+		while(true) {
+			if (lastImage!=null&&topLeftCorner!=null&&topRightCorner!=null&&bottomLeftCorner!=null&&bottomRightCorner!=null) {
+				ImageLoader.insertImage("face.png", lastImage, topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner);
 			}
 		}
 	}
@@ -58,7 +49,8 @@ public class Main {
 		float[][] pixels=Window.getPixels(ScreenSetup.pictureStartX, ScreenSetup.pictureStartY, ScreenSetup.pictureEndX, ScreenSetup.pictureEndY);
 		pixels=ImageProcessor.scaleImage(pixels, sizeOfImage);
 		Color[][] oldImage=ImageProcessor.scaleImage(Window.getLastImage(), sizeOfImage);
-			
+		lastImage=oldImage;
+		
 		if (recenterThread.lastCenter!=null) {
 			Point newCenter=recenterThread.lastCenter;
 			if (lastCenter!=newCenter) {
@@ -76,9 +68,22 @@ public class Main {
 			}
 			SecondThread.search();
 			ArrayList<Point> peaks=new ArrayList<Point>();
-			peaks.add(SecondThread.getCenter());
+			Point center=SecondThread.getCenter();
+			peaks.add(center);
+			if (isReasonableCorner(center, pixels)) {
+				int xRange=30, yRange=30;
+				topLeftCorner=center;
+				Point topRight=new Point(center.x+paperWidth, center.y);
+				topRightCorner=findCenterInBox(pixels, topRightTemplatesLocation, new Point(topRight.x-xRange, topRight.y-yRange), new Point(topRight.x+xRange, topRight.y+yRange));
+				peaks.add(topRightCorner);
+				Point bottomLeft=new Point(center.x, center.y+(int)(paperWidth/paperWidthOverHeight));
+				bottomLeftCorner=findCenterInBox(pixels, bottomLeftTemplatesLocation, new Point(bottomLeft.x-xRange, bottomLeft.y-yRange), new Point(bottomLeft.x+xRange, bottomLeft.y+yRange));
+				peaks.add(bottomLeftCorner);
+				Point bottomRight=new Point(center.x+paperWidth, center.y+(int)(paperWidth/paperWidthOverHeight));
+				bottomRightCorner=findCenterInBox(pixels, bottomRightTemplatesLocation, new Point(bottomRight.x-xRange, bottomRight.y-yRange), new Point(bottomRight.x+xRange, bottomRight.y+yRange));
+				peaks.add(bottomRightCorner);
+			}
 			if (displayFinalPicture) Window.displayPixelsWithPeaks(oldImage, peaks, peaks.get(0), "asdfd");
-			//SecondThread.setCenterOfCorner(lastCenter);
 		}
 		
 		if (!startedThread) {
@@ -91,13 +96,17 @@ public class Main {
 		System.out.println("Took "+(0.0+System.currentTimeMillis()-startTime)/1000+" seconds.");
 	}
 	
-	public static Point findCenter(float[][] pixels, String templateLocation, Point lastCenter) {
+	public static Point findCenter(float[][] pixels, String templateLocation) {
+		return findCenterInBox(pixels, templateLocation, new Point(0, 0), new Point(pixels.length, pixels[0].length));
+	}
+	
+	public static Point findCenterInBox(float[][] pixels, String templateLocation, Point topLeftCorner, Point bottomRightCorner) {
 		ArrayList<Template> templates=TemplateSaver.loadTemplates(templateLocation);
 		float maxConfidence=0;
 		Point bestCenter=new Point(0,0);
 
-		for (int x=0; x<pixels.length; x++) {
-			for (int y=0; y<pixels[x].length; y++) {
+		for (int x=Math.max(topLeftCorner.x, 0); x<Math.min(bottomRightCorner.x, pixels.length); x++) {
+			for (int y=Math.max(topLeftCorner.y, 0); y<Math.min(bottomRightCorner.y, pixels[0].length); y++) {
 				for (Template t:templates) {
 					float currentMatch=t.matchTemplate(pixels, x, y);
 					if (currentMatch>maxConfidence) {
@@ -110,65 +119,27 @@ public class Main {
 		return bestCenter;
 	}
 	
-	/*
-	private static ArrayList<Point> getTopLeftCorners(float[][] pixels, boolean[][] cutoff) {
-		float[][] corners=ShapeFinder.getPointsWithTopLeftCorner(cutoff);
-		ImageProcessor.applyExponentialCurve(corners, 4);
-		if (displayPictures) Window.displayPixels(corners, "Likely Corners");
-
-		Blur.applyGaussianBlur(corners, secondGausianBlurWidth);
-		if (displayPictures) Window.displayPixels(corners, "Likely Corners, Blurred");
-
-		ImageProcessor.normalize(corners);
-		ImageProcessor.applyExponentialCurve(corners, 4);
-		if (displayPictures) Window.displayPixels(corners, "Likely Corners, Normalized");
-		
-		return ShapeFinder.getPeaks(corners);
+	public static boolean isReasonableCorner(Point topLeft, float[][] pixels) {
+		return topLeft.x>0&&topLeft.y>0&&topLeft.x+paperWidth<pixels.length-1&&topLeft.y+paperWidth/paperWidthOverHeight<pixels[0].length-1;
 	}
-	
-	private static ArrayList<Point> getTopRightCorners(float[][] pixels, boolean[][] cutoff) {
-		float[][] corners=ShapeFinder.getPointsWithTopRightCorner(cutoff);
-		ImageProcessor.applyExponentialCurve(corners, 4);
-		if (displayPictures) Window.displayPixels(corners, "Likely Corners");
 
-		Blur.applyGaussianBlur(corners, secondGausianBlurWidth);
-		if (displayPictures) Window.displayPixels(corners, "Likely Corners, Blurred");
-
-		ImageProcessor.normalize(corners);
-		ImageProcessor.applyExponentialCurve(corners, 4);
-		if (displayPictures) Window.displayPixels(corners, "Likely Corners, Normalized");
-		
-		return ShapeFinder.getPeaks(corners);
+	public void run() {
+		if (setupPicturePosition) {
+			ScreenSetup.setupScreen();
+		}
+		else if (editTemplates) {
+			TemplateSaver.templateRunner(TemplateSaver.loadTemplates(templateLocationToPracticeWith), templateLocationToPracticeWith);
+		}
+		else {
+			ScreenSetup.loadData();
+			Window.init();
+			try {
+				for (int i=0; i<10000000; i++) {
+					runProgram();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
-	
-	private static ArrayList<Point> getBottomLeftCorners(float[][] pixels, boolean[][] cutoff) {
-		float[][] corners=ShapeFinder.getPointsWithBottomLeftCorner(cutoff);
-		ImageProcessor.applyExponentialCurve(corners, 4);
-		if (displayPictures) Window.displayPixels(corners, "Likely Corners");
-
-		Blur.applyGaussianBlur(corners, secondGausianBlurWidth);
-		if (displayPictures) Window.displayPixels(corners, "Likely Corners, Blurred");
-
-		ImageProcessor.normalize(corners);
-		ImageProcessor.applyExponentialCurve(corners, 4);
-		if (displayPictures) Window.displayPixels(corners, "Likely Corners, Normalized");
-		
-		return ShapeFinder.getPeaks(corners);
-	}
-	
-	private static ArrayList<Point> getBottomRightCorners(float[][] pixels, boolean[][] cutoff) {
-		float[][] corners=ShapeFinder.getPointsWithBottomRightCorner(cutoff);
-		ImageProcessor.applyExponentialCurve(corners, 4);
-		if (displayPictures) Window.displayPixels(corners, "Likely Corners");
-
-		Blur.applyGaussianBlur(corners, secondGausianBlurWidth);
-		if (displayPictures) Window.displayPixels(corners, "Likely Corners, Blurred");
-
-		ImageProcessor.normalize(corners);
-		ImageProcessor.applyExponentialCurve(corners, 4);
-		if (displayPictures) Window.displayPixels(corners, "Likely Corners, Normalized");
-		
-		return ShapeFinder.getPeaks(corners);
-	}
-*/
 }
