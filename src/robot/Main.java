@@ -2,6 +2,7 @@ package robot;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import images.ImageLoader;
@@ -36,7 +37,14 @@ public class Main implements Runnable{
 		(new Thread(new Main())).start();
 		while(true) {
 			if (lastImage!=null&&topLeftCorner!=null&&topRightCorner!=null&&bottomLeftCorner!=null&&bottomRightCorner!=null) {
-				ImageLoader.insertImage("face.png", lastImage, topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner);
+				Color[][] image=lastImage;
+				ImageLoader.insertImage("face.png", image, topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner);
+				ArrayList<Point> peaks=new ArrayList<Point>();
+				peaks.add(topLeftCorner);
+				peaks.add(topRightCorner);
+				peaks.add(bottomLeftCorner);
+				peaks.add(bottomRightCorner);
+				Window.displayPixelsWithPeaks(image, peaks, topLeftCorner, "FinalImage");
 			}
 		}
 	}
@@ -48,8 +56,7 @@ public class Main implements Runnable{
 
 		float[][] pixels=Window.getPixels(ScreenSetup.pictureStartX, ScreenSetup.pictureStartY, ScreenSetup.pictureEndX, ScreenSetup.pictureEndY);
 		pixels=ImageProcessor.scaleImage(pixels, sizeOfImage);
-		Color[][] oldImage=ImageProcessor.scaleImage(Window.getLastImage(), sizeOfImage);
-		lastImage=oldImage;
+		Color[][] oldImage=Window.getLastImage();
 		
 		if (recenterThread.lastCenter!=null) {
 			Point newCenter=recenterThread.lastCenter;
@@ -72,18 +79,18 @@ public class Main implements Runnable{
 			peaks.add(center);
 			if (isReasonableCorner(center, pixels)) {
 				int xRange=30, yRange=30;
-				topLeftCorner=center;
+				
 				Point topRight=new Point(center.x+paperWidth, center.y);
-				topRightCorner=findCenterInBox(pixels, topRightTemplatesLocation, new Point(topRight.x-xRange, topRight.y-yRange), new Point(topRight.x+xRange, topRight.y+yRange));
-				peaks.add(topRightCorner);
+				topRight=findCenterInBox(pixels, topRightTemplatesLocation, new Point(topRight.x-xRange, topRight.y-yRange), new Point(topRight.x+xRange, topRight.y+yRange));
+				
 				Point bottomLeft=new Point(center.x, center.y+(int)(paperWidth/paperWidthOverHeight));
-				bottomLeftCorner=findCenterInBox(pixels, bottomLeftTemplatesLocation, new Point(bottomLeft.x-xRange, bottomLeft.y-yRange), new Point(bottomLeft.x+xRange, bottomLeft.y+yRange));
-				peaks.add(bottomLeftCorner);
+				bottomLeft=findCenterInBox(pixels, bottomLeftTemplatesLocation, new Point(bottomLeft.x-xRange, bottomLeft.y-yRange), new Point(bottomLeft.x+xRange, bottomLeft.y+yRange));
+				
 				Point bottomRight=new Point(center.x+paperWidth, center.y+(int)(paperWidth/paperWidthOverHeight));
-				bottomRightCorner=findCenterInBox(pixels, bottomRightTemplatesLocation, new Point(bottomRight.x-xRange, bottomRight.y-yRange), new Point(bottomRight.x+xRange, bottomRight.y+yRange));
-				peaks.add(bottomRightCorner);
+				bottomRight=findCenterInBox(pixels, bottomRightTemplatesLocation, new Point(bottomRight.x-xRange, bottomRight.y-yRange), new Point(bottomRight.x+xRange, bottomRight.y+yRange));
+				
+				convertToHD(oldImage, pixels, center, topRight, bottomLeft, bottomRight);
 			}
-			if (displayFinalPicture) Window.displayPixelsWithPeaks(oldImage, peaks, peaks.get(0), "asdfd");
 		}
 		
 		if (!startedThread) {
@@ -123,6 +130,15 @@ public class Main implements Runnable{
 		return topLeft.x>0&&topLeft.y>0&&topLeft.x+paperWidth<pixels.length-1&&topLeft.y+paperWidth/paperWidthOverHeight<pixels[0].length-1;
 	}
 
+	private static void convertToHD(Color[][] original, float[][] smaller, Point topLeft, Point topRight, Point bottomLeft, Point bottomRight) {
+		float newScale=Math.min(original.length/(float)smaller.length, original[0].length/(float)smaller[0].length);
+		topLeftCorner=new Point((int)(topLeft.x*newScale), (int)(topLeft.y*newScale));
+		topRightCorner=new Point((int)(topRight.x*newScale), (int)(topRight.y*newScale));
+		bottomLeftCorner=new Point((int)(bottomLeft.x*newScale), (int)(bottomLeft.y*newScale));
+		bottomRightCorner=new Point((int)(bottomRight.x*newScale), (int)(bottomRight.y*newScale));
+		lastImage=original;
+	}
+	
 	public void run() {
 		if (setupPicturePosition) {
 			ScreenSetup.setupScreen();
