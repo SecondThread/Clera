@@ -2,9 +2,9 @@ package robot;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import game.Game;
 import images.ImageLoader;
 import processing.ImageProcessor;
 import saving.ScreenSetup;
@@ -13,7 +13,6 @@ import templateMatching.TemplateSaver;
 
 public class Main implements Runnable{
 	private static boolean setupPicturePosition=false, editTemplates=false;
-	private static boolean displayFinalPicture=true;
 	public static boolean useSameWindow=true;
 	
 	public static final String topLeftTemplatesLocation="templates.txt", topRightTemplatesLocation="templatesTR.txt",
@@ -37,14 +36,7 @@ public class Main implements Runnable{
 		(new Thread(new Main())).start();
 		while(true) {
 			if (lastImage!=null&&topLeftCorner!=null&&topRightCorner!=null&&bottomLeftCorner!=null&&bottomRightCorner!=null) {
-				Color[][] image=lastImage;
-				ImageLoader.insertImage("face.png", image, topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner);
-				ArrayList<Point> peaks=new ArrayList<Point>();
-				peaks.add(topLeftCorner);
-				peaks.add(topRightCorner);
-				peaks.add(bottomLeftCorner);
-				peaks.add(bottomRightCorner);
-				Window.displayPixelsWithPeaks(image, peaks, topLeftCorner, "FinalImage");
+				runGameLoop();
 			}
 		}
 	}
@@ -158,4 +150,29 @@ public class Main implements Runnable{
 			}
 		}
 	}
+
+	
+	private static void runGameLoop() {
+		final float millisBetweenUpdates=1000f/20;
+		float nextUpdateTime=System.currentTimeMillis()+millisBetweenUpdates;
+		Game game=new Game();
+		while (true) {
+			while (System.currentTimeMillis()>nextUpdateTime) {
+				game.update();
+				nextUpdateTime+=millisBetweenUpdates;
+			}
+			render(game.render());
+		}
+	}
+	
+	private static void render(Color[][] image) {
+		ImageLoader.drawImage(image, lastImage, topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner);
+		ArrayList<Point> peaks=new ArrayList<Point>();
+		peaks.add(topLeftCorner);
+		peaks.add(topRightCorner);
+		peaks.add(bottomLeftCorner);
+		peaks.add(bottomRightCorner);
+		Window.displayPixelsWithPeaks(lastImage, peaks, topLeftCorner, "FinalImage");
+	}
+	
 }
