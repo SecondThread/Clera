@@ -100,6 +100,16 @@ public class Window {
 		drawImage(toDraw, pictureName, true);
 	}
 
+	public static void displayPixels(Color[][] pixels, String pictureName) {
+		BufferedImage toDraw = new BufferedImage(pixels.length, pixels[0].length, BufferedImage.TYPE_INT_ARGB);
+		for (int x = 0; x < pixels.length; x++) {
+			for (int y = 0; y < pixels[x].length; y++) {
+				toDraw.setRGB(x, y, pixels[x][y].getRGB());
+			}
+		}
+		drawImage(toDraw, pictureName, true);
+	}
+	
 	public static void displayPixelsWithPeaks(float[][] pixels, ArrayList<Point> peaks, Point target,
 			String pictureName) {
 		Color[][] colors=new Color[pixels.length][pixels[0].length];
@@ -135,12 +145,12 @@ public class Window {
 		}
 
 		if (target.x>5&&target.y>5&&target.x<pixels.length-6&&target.y<pixels[0].length-6) {
-		for (int x = -5; x <= 5; x++) {
-			for (int y = -5; y <= 5; y++) {
-				if (Math.max(Math.abs(x), Math.abs(y)) % 2 == 0)
-					if (target!=null)toDraw.setRGB(target.x + x, target.y + y, targetColor.getRGB());
+			for (int x = -5; x <= 5; x++) {
+				for (int y = -5; y <= 5; y++) {
+					if (Math.max(Math.abs(x), Math.abs(y)) % 2 == 0)
+						if (target!=null)toDraw.setRGB(target.x + x, target.y + y, targetColor.getRGB());
+				}
 			}
-		}
 		}
 		drawImage(toDraw, pictureName, true, true);
 	}
@@ -194,7 +204,7 @@ public class Window {
 			if (!Main.useSameWindow) {
 				frame.setLocation(x, y);
 			} else {
-				frame.setLocation(100, 200);
+				frame.setLocation(0, 0);
 			}
 			x += i.getWidth();
 			if (x > i.getWidth() * 3) {

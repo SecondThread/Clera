@@ -2,14 +2,17 @@ package images;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import robot.Main;
+
 public class ImageLoader {
-	private static BufferedImage loadImage(String path) {
+	public static BufferedImage loadImage(String path) {
 		 BufferedImage imageRead=null;
 		try {
 			imageRead=ImageIO.read(new File(path));
@@ -46,4 +49,25 @@ public class ImageLoader {
 		}
 		return imageArray;
 	}
+
+	public static Color[][] getPaper(Color[][] background, Point topLeft, Point topRight, Point bottomLeft, Point bottomRight) {
+		int height=Math.max(bottomLeft.y-topLeft.y, bottomRight.y-topRight.y);
+		int width=(int)(height*Main.paperWidthOverHeight);
+		Color[][] paper=new Color[width][height];
+		for (int x=0; x<width; x++) {
+			for (int y=0; y<height; y++) {
+				float xPercent=x/(float)width;
+				float yPercent=y/(float)height;
+				float leftAlignX=bottomLeft.x*yPercent+topLeft.x*(1-yPercent);
+				float leftAlignY=bottomLeft.y*yPercent+topLeft.y*(1-yPercent);
+				float rightAlignX=bottomRight.x*yPercent+topRight.x*(1-yPercent);
+				float rightAlignY=bottomRight.y*yPercent+topRight.y*(1-yPercent);
+				int newX=(int)(rightAlignX*xPercent+leftAlignX*(1-xPercent));
+				int newY=(int)(rightAlignY*xPercent+leftAlignY*(1-xPercent));
+				paper[x][y]=background[newX][newY];
+			}
+		}
+		return paper;
+	}
+	
 }

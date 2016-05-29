@@ -5,6 +5,8 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 import game.Game;
+import game.PaperProcessor;
+import game.PaperTypes;
 import images.ImageLoader;
 import processing.ImageProcessor;
 import saving.ScreenSetup;
@@ -27,7 +29,7 @@ public class Main implements Runnable{
 	private static float[][] recenterPixels;
 	
 	private static int paperWidth=(int)(130*2/3f);
-	private static float paperWidthOverHeight=22/14.3f;
+	public static float paperWidthOverHeight=22/14.3f;
 	
 	private static volatile Point topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner;
 	private static volatile Color[][] lastImage;
@@ -83,6 +85,9 @@ public class Main implements Runnable{
 				
 				convertToHD(oldImage, pixels, center, topRight, bottomLeft, bottomRight);
 			}
+			else {
+				convertToHD(oldImage, pixels, center, center, center, center);
+			}
 		}
 		
 		if (!startedThread) {
@@ -92,7 +97,7 @@ public class Main implements Runnable{
 			recenterPixels=pixels;
 			recenterImage=oldImage;
 		}
-		System.out.println("Took "+(0.0+System.currentTimeMillis()-startTime)/1000+" seconds.");
+		//System.out.println("Took "+(0.0+System.currentTimeMillis()-startTime)/1000+" seconds.");
 	}
 	
 	public static Point findCenter(float[][] pixels, String templateLocation) {
@@ -125,9 +130,9 @@ public class Main implements Runnable{
 	private static void convertToHD(Color[][] original, float[][] smaller, Point topLeft, Point topRight, Point bottomLeft, Point bottomRight) {
 		float newScale=Math.min(original.length/(float)smaller.length, original[0].length/(float)smaller[0].length);
 		topLeftCorner=new Point((int)(topLeft.x*newScale), (int)(topLeft.y*newScale));
-		topRightCorner=new Point((int)(topRight.x*newScale), (int)(topRight.y*newScale));
-		bottomLeftCorner=new Point((int)(bottomLeft.x*newScale), (int)(bottomLeft.y*newScale));
-		bottomRightCorner=new Point((int)(bottomRight.x*newScale), (int)(bottomRight.y*newScale));
+		topRightCorner=new Point((int)((topRight.x+.5)*newScale), (int)(topRight.y*newScale));
+		bottomLeftCorner=new Point((int)(bottomLeft.x*newScale), (int)((bottomLeft.y+.5)*newScale));
+		bottomRightCorner=new Point((int)((bottomRight.x+.5)*newScale), (int)((bottomRight.y+.5)*newScale));
 		lastImage=original;
 	}
 	
@@ -153,8 +158,8 @@ public class Main implements Runnable{
 
 	
 	private static void runGameLoop() {
-		final float millisBetweenUpdates=1000f/20;
-		float nextUpdateTime=System.currentTimeMillis()+millisBetweenUpdates;
+		final double millisBetweenUpdates=1000f/20;
+		double nextUpdateTime=System.currentTimeMillis()+millisBetweenUpdates;
 		Game game=new Game();
 		while (true) {
 			while (System.currentTimeMillis()>nextUpdateTime) {
@@ -166,13 +171,31 @@ public class Main implements Runnable{
 	}
 	
 	private static void render(Color[][] image) {
-		ImageLoader.drawImage(image, lastImage, topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner);
+		Color[][] lastImageClone=new Color[lastImage.length][lastImage[0].length];
+		for (int x=0; x<lastImage.length; x++)
+			for (int y=0; y<lastImage[x].length; y++)
+				lastImageClone[x][y]=lastImage[x][y];
+		
+		if (topLeftCorner.x>5&&topLeftCorner.x<topRightCorner.x-5) {
+			Color[][] paper=ImageLoader.getPaper(lastImageClone, topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner);
+			PaperTypes paperType=PaperProcessor.getTypeOfPaper(paper);
+			if (paperType==PaperTypes.VIDEO_PAPER) {
+				ImageLoader.drawImage(image, lastImageClone, topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner);			
+			}
+			if (paperType==PaperTypes.SIMULATION_PAPER) {
+				ImageLoader.drawImage(image, lastImageClone, topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner);
+			}
+			if (paperType==PaperTypes.NOT_PAPER) {
+				
+			}
+		}
 		ArrayList<Point> peaks=new ArrayList<Point>();
 		peaks.add(topLeftCorner);
 		peaks.add(topRightCorner);
 		peaks.add(bottomLeftCorner);
 		peaks.add(bottomRightCorner);
-		Window.displayPixelsWithPeaks(lastImage, peaks, topLeftCorner, "FinalImage");
+
+		Window.displayPixelsWithPeaks(lastImageClone, peaks, topLeftCorner, "FinalImage");
 	}
 	
 }
