@@ -44,7 +44,6 @@ public class Main implements Runnable{
 	}
 
 	private static void runProgram() {
-		long startTime=System.currentTimeMillis();
 		ScreenSetup.loadData();
 		Window.init();
 
@@ -72,7 +71,7 @@ public class Main implements Runnable{
 			Point center=SecondThread.getCenter();
 			peaks.add(center);
 			if (isReasonableCorner(center, pixels)) {
-				int xRange=30, yRange=30;
+				int xRange=45, yRange=30;
 				
 				Point topRight=new Point(center.x+paperWidth, center.y);
 				topRight=findCenterInBox(pixels, topRightTemplatesLocation, new Point(topRight.x-xRange, topRight.y-yRange), new Point(topRight.x+xRange, topRight.y+yRange));
@@ -104,7 +103,8 @@ public class Main implements Runnable{
 		return findCenterInBox(pixels, templateLocation, new Point(0, 0), new Point(pixels.length, pixels[0].length));
 	}
 	
-	public static Point findCenterInBox(float[][] pixels, String templateLocation, Point topLeftCorner, Point bottomRightCorner) {
+	//finds the center looking throughout the box, normalizing
+	private static Point findCenterInBox(float[][] pixels, String templateLocation, Point topLeftCorner, Point bottomRightCorner) {
 		ArrayList<Template> templates=TemplateSaver.loadTemplates(templateLocation);
 		float maxConfidence=0;
 		Point bestCenter=new Point(0,0);
@@ -183,7 +183,7 @@ public class Main implements Runnable{
 				ImageLoader.drawImage(image, lastImageClone, topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner);			
 			}
 			if (paperType==PaperTypes.SIMULATION_PAPER) {
-				ImageLoader.drawImage(image, lastImageClone, topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner);
+				//ImageLoader.drawImage(image, lastImageClone, topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner);
 			}
 			if (paperType==PaperTypes.NOT_PAPER) {
 				

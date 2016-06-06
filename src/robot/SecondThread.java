@@ -10,8 +10,8 @@ public class SecondThread {
 	private static Template corner;
 	private static float[][] image;
 	
-	private static final int horizontalSearchRange=60, verticalSearchRange=40;
-	private static final int horizontalSearchRangeLarge=100, verticalSearchRangeLarge=60;
+	private static final int horizontalSearchRange=10, verticalSearchRange=10;
+	private static final int horizontalSearchRangeLarge=30, verticalSearchRangeLarge=20;
 
 	static void setImage(float[][] image) {
 		SecondThread.image=image;

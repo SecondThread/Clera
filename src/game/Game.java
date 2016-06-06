@@ -2,26 +2,16 @@ package game;
 
 import java.awt.Color;
 
-import images.ImageLoader;
-
 public class Game {
 	
 	private Color color=Color.white;
 	private int counter=0;
+	private int notPaperCounter=0, videoCounter=0, simulationCounter=0;
 	
 	//to be called 20 times a second
 	public void update() {
-		counter+=5;
-		if (counter>30) {
-			counter=0;
-		}
-		color=Color.white;
-		if (counter<20) {
-			color=Color.red;
-		}
-		if (counter<10) {
-			color=Color.blue;
-		}
+		float max=Math.max(Math.max(notPaperCounter, videoCounter), simulationCounter);
+		color=new Color(videoCounter/max, notPaperCounter/max, simulationCounter/max);
 	}
 	
 	public Color[][] render() {
@@ -33,5 +23,21 @@ public class Game {
 			}
 		}
 		return toReturn;
+	}
+	
+	public void setTypeOfPaper(PaperTypes paperType) {
+		switch(paperType) {
+		case SIMULATION_PAPER:
+			simulationCounter++;
+			break;
+		case VIDEO_PAPER:
+			videoCounter++;
+			break;
+		case NOT_PAPER:
+			notPaperCounter++;
+			break;
+		default:
+			System.out.println("Invalid paper type in Game class");
+		}
 	}
 }
