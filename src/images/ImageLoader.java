@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.plaf.basic.BasicLabelUI;
 
 import robot.Main;
 
@@ -30,6 +31,31 @@ public class ImageLoader {
 				float rightMiddleBarX=topRight.x*(1-yPercent)+bottomRight.x*yPercent, rightMiddleBarY=topRight.y*(1-yPercent)+bottomRight.y*yPercent;
 				float newX=leftMiddleBarX*(1-xPercent)+rightMiddleBarX*xPercent, newY=leftMiddleBarY*(1-xPercent)+rightMiddleBarY*xPercent;
 				background[(int)newX][(int)newY]=image[x][y];
+			}
+		}
+	}
+	
+	public static void drawImageWithAlpha(Color[][] image, Color[][] background, Point topLeft, Point topRight, Point bottomLeft, Point bottomRight) {
+		boolean[][] drewTo=new boolean[background.length][background[0].length];
+		for (int x=0; x<drewTo.length; x++) {
+			for (int y=0; y<drewTo[x].length; y++) {
+				drewTo[x][y]=false;
+			}
+		}
+		for (int x=0; x<image.length; x++) {
+			for (int y=0; y<image[x].length; y++) {
+				float xPercent=(float)x/image.length, yPercent=(float)y/image[x].length;
+				float leftMiddleBarX=topLeft.x*(1-yPercent)+bottomLeft.x*yPercent, leftMiddleBarY=topLeft.y*(1-yPercent)+bottomLeft.y*yPercent;
+				float rightMiddleBarX=topRight.x*(1-yPercent)+bottomRight.x*yPercent, rightMiddleBarY=topRight.y*(1-yPercent)+bottomRight.y*yPercent;
+				float newX=leftMiddleBarX*(1-xPercent)+rightMiddleBarX*xPercent, newY=leftMiddleBarY*(1-xPercent)+rightMiddleBarY*xPercent;
+				if (!drewTo[(int)newX][(int)newY]) {
+					float a=image[x][y].getAlpha()/255f;
+					float r=image[x][y].getRed()/255f*a+background[(int)newX][(int)newY].getRed()/255f*(1-a);
+					float g=image[x][y].getGreen()/255f*a+background[(int)newX][(int)newY].getGreen()/255f*(1-a);
+					float b=image[x][y].getBlue()/255f*a+background[(int)newX][(int)newY].getBlue()/255f*(1-a);
+					background[(int)newX][(int)newY]=new Color(r, g, b);
+					drewTo[(int)newX][(int)newY]=true;
+				}
 			}
 		}
 	}

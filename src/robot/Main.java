@@ -25,7 +25,6 @@ public class Main implements Runnable{
 	private static final RecenterThread recenterThread=new RecenterThread();
 	private static boolean startedThread=false;
 	private static Point lastCenter=null;
-	private static Color[][] recenterImage;
 	private static float[][] recenterPixels;
 	
 	private static int paperWidth=(int)(130*2/3f);
@@ -61,7 +60,6 @@ public class Main implements Runnable{
 				SecondThread.searchAllPixels();
 				recenterThread.setPixels(pixels);
 				recenterPixels=pixels;
-				recenterImage=oldImage;
 			} 
 			else {
 				SecondThread.setImage(pixels);				
@@ -94,7 +92,6 @@ public class Main implements Runnable{
 			startedThread=true;
 			recenterThread.setPixels(pixels);
 			recenterPixels=pixels;
-			recenterImage=oldImage;
 		}
 		//System.out.println("Took "+(0.0+System.currentTimeMillis()-startTime)/1000+" seconds.");
 	}
@@ -166,11 +163,11 @@ public class Main implements Runnable{
 				game.update();
 				nextUpdateTime+=millisBetweenUpdates;
 			}
-			render(game.render());
+			render(game.render(), game);
 		}
 	}
 	
-	private static void render(Color[][] image) {
+	private static void render(Color[][] image, Game game) {
 		Color[][] lastImageClone=new Color[lastImage.length][lastImage[0].length];
 		for (int x=0; x<lastImage.length; x++)
 			for (int y=0; y<lastImage[x].length; y++)
@@ -180,14 +177,14 @@ public class Main implements Runnable{
 			Color[][] paper=ImageLoader.getPaper(lastImageClone, topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner);
 			PaperTypes paperType=PaperProcessor.getTypeOfPaper(paper);
 			if (paperType==PaperTypes.VIDEO_PAPER) {
-				ImageLoader.drawImage(image, lastImageClone, topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner);			
+				ImageLoader.drawImageWithAlpha(image, lastImageClone, topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner);			
 			}
 			if (paperType==PaperTypes.SIMULATION_PAPER) {
-				//ImageLoader.drawImage(image, lastImageClone, topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner);
+				ImageLoader.drawImageWithAlpha(image, lastImageClone, topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner);
 			}
 			if (paperType==PaperTypes.NOT_PAPER) {
-				
 			}
+			game.setTypeOfPaper(paperType);
 		}
 		ArrayList<Point> peaks=new ArrayList<Point>();
 		peaks.add(topLeftCorner);
