@@ -61,7 +61,8 @@ public class Window {
 		Color color = new Color(image.getRGB(x, y));
 		// I have no idea where these magic numbers came from. I just kinda
 		// copied them from a formula on Wikepedia.
-		return 0.2126f * color.getRed() / 255 + 0.7152f * color.getGreen() / 255 + 0.0722f * color.getBlue() / 255;
+		//return 0.2126f * color.getRed() / 255 + 0.7152f * color.getGreen() / 255 + 0.0722f * color.getBlue() / 255;
+		return color.getRed()/255f;
 	}
 	
 	private static float getBlackLumenance(int x, int y, BufferedImage image) {
