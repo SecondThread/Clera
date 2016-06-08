@@ -185,6 +185,7 @@ public class Main implements Runnable{
 			if (paperType==PaperTypes.NOT_PAPER) {
 			}
 			game.setTypeOfPaper(paperType);
+			game.setPaper(paper);
 		}
 		ArrayList<Point> peaks=new ArrayList<Point>();
 		peaks.add(topLeftCorner);

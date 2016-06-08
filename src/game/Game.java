@@ -13,7 +13,7 @@ public class Game {
 	
 	private Simulation sim;
 	private boolean playingSim=false;
-	private Color[][] paper;
+	private Color[][] paper=null;
 	
 	public Game() {
 		movie=new Movie();
@@ -31,16 +31,19 @@ public class Game {
 		if (videoCounter>=maxProgress) {
 			playingMovie=true;
 		}
-		if (simulationCounter>=maxProgress) {
+		if (simulationCounter>=maxProgress&&paper!=null) {
 			playingSim=true;
+			sim=new Simulation(paper);
 		}
 		
 		if (playingMovie) {
-			if (movie.update()) {
-				//Movie is over
+			if (movie.update()) {//Movie is over
 				playingMovie=false;
 				movie=new Movie();
 			}
+		}
+		if (playingSim) {
+			//do sim stuff
 		}
 	}
 	
@@ -49,6 +52,9 @@ public class Game {
 		if (playingMovie) {
 			toReturn=movie.getFrame();
 			hideWhite(toReturn);
+		}
+		else if (playingSim) {
+			toReturn=sim.render();
 		}
 		else {
 			paintLoadingScreen(toReturn);

@@ -57,6 +57,16 @@ public class Window {
 		return brightness;
 	}
 
+	public static float[][] getNonRedLuminanceOfImage(Color[][] image) {
+		float[][] toReturn=new float[image.length][image[0].length];
+		for (int x=0; x<toReturn.length; x++) {
+			for (int y=0; y<toReturn[x].length; y++) {
+				toReturn[x][y]=getNonRedLuminance(image[x][y]);
+			}
+		}
+		return toReturn;
+	}
+	
 	private static float getNormalLuminence(int x, int y, BufferedImage image) {
 		Color color = new Color(image.getRGB(x, y));
 		// I have no idea where these magic numbers came from. I just kinda
@@ -64,10 +74,9 @@ public class Window {
 		//return 0.2126f * color.getRed() / 255 + 0.7152f * color.getGreen() / 255 + 0.0722f * color.getBlue() / 255;
 		return color.getRed()/255f;
 	}
-	
-	private static float getBlackLumenance(int x, int y, BufferedImage image) {
-		Color color = new Color(image.getRGB(x, y));
-		return (255-(.3f*color.getRed()+.3f*color.getGreen()+.3f*color.getBlue()))/255;
+
+	private static float getNonRedLuminance(Color color) {
+		return color.getRed()/255f*0.5f+color.getBlue()/255f*0.5f;
 	}
 
 	public static void displayPixels(float[][] pixels, String pictureName) {
