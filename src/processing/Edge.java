@@ -21,11 +21,11 @@ public class Edge {
 		return toReturn;
 	}
 	
-	public static Color[][] toColorArray(Edge[][] edges, float cutoff) {
+	public static Color[][] toColorArray(Edge[][] edges) {
 		Color[][] toReturn=new Color[edges.length][edges[0].length];
 		for (int x=0; x<toReturn.length; x++) {
 			for (int y=0; y<toReturn[x].length; y++) {
-				if (edges[x][y].intensity>cutoff) {
+				if (edges[x][y]!=null) {
 					float angle=edges[x][y].angle;
 					double blue=Math.cos(angle);
 					double red=Math.sin(angle);

@@ -6,12 +6,14 @@ import processing.ImageProcessor;
 
 public class PaperProcessor {
 	
+	private static boolean processUp=false;
+	
 	public static PaperTypes getTypeOfPaper(Color[][] paper) {
 		float[][] luminance=toLuminanceAsBlack(paper);
 		ImageProcessor.normalize(luminance);
 		boolean[][] cutoff=getCutoff(luminance, 0.5f);
 		boolean left=cutoff[0][cutoff[0].length/2];
-		boolean up=cutoff[cutoff.length/2][0];
+		boolean up=cutoff[cutoff.length/2][0]||!processUp;
 		boolean right=cutoff[cutoff.length-1][cutoff[0].length/2];
 		boolean down=cutoff[cutoff.length/2][cutoff[0].length-1];
 		boolean videoTag=cutoff[3*cutoff.length/4][cutoff[0].length-1];

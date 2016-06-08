@@ -1,6 +1,7 @@
 package processing;
 
 public class EdgeDetection {
+	private static float minIntensity=.07f;
 	private static float[][] sobelXKernal={{-1, -2, -1}, {0, 0, 0}, {1, 2, 1}};
 	private static float[][] sobelYKernal={{-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}};
 	
@@ -23,7 +24,7 @@ public class EdgeDetection {
 				else {
 					angle=(float)Math.atan(sobelX[x][y]/Math.min(-0.001f, sobelY[x][y]));
 				}
-				sobelTotal[x][y]=new Edge(intensity, angle);
+				if (intensity>minIntensity) sobelTotal[x][y]=new Edge(intensity, angle);
 			}
 		}
 		return sobelTotal;

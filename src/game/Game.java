@@ -33,7 +33,9 @@ public class Game {
 		}
 		if (simulationCounter>=maxProgress&&paper!=null) {
 			playingSim=true;
-			sim=new Simulation(paper);
+			if (sim==null) {
+				sim=new Simulation(paper);
+			}
 		}
 		
 		if (playingMovie) {
@@ -43,6 +45,7 @@ public class Game {
 			}
 		}
 		if (playingSim) {
+			sim.update(paper);
 			//do sim stuff
 		}
 	}
@@ -114,29 +117,28 @@ public class Game {
 		switch(paperType) {
 		case SIMULATION_PAPER:
 			simulationCounter++;
-			if (simulationCounter>maxProgress) {
-				simulationCounter=maxProgress;
-				videoCounter=0;
-			}
 			break;
 		case VIDEO_PAPER:
 			videoCounter++;
-			if (videoCounter>maxProgress) {
-				videoCounter=maxProgress;
-				simulationCounter=0;
-			}
 			break;
 		case NOT_PAPER:
 			notPaperCounter++;
-			videoCounter=0;
-			simulationCounter=0;
 			break;
 		default:
 			System.out.println("Invalid paper type in Game class");
+		}
+		if (simulationCounter>maxProgress) {
+			simulationCounter=maxProgress+1;
+			videoCounter=0;
+		}
+		if (videoCounter>maxProgress) {
+			videoCounter=maxProgress+1;
+			simulationCounter=0;
 		}
 	}
 
 	public void setPaper(Color[][] paper) {
 		this.paper=paper;
 	}
+	
 }
