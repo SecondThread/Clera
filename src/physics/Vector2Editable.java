@@ -15,6 +15,6 @@ public class Vector2Editable extends Vector2 {
 	}
 
 	public static Vector2Editable createFromPolar(double r, double theta) {
-		return new Vector2Editable(r*Math.sin(theta), r*Math.cos(theta));
+		return new Vector2Editable(r*Math.cos(theta), r*Math.sin(theta));
 	}
 }

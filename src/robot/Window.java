@@ -76,7 +76,8 @@ public class Window {
 	}
 
 	private static float getNonRedLuminance(Color color) {
-		return color.getRed()/255f*0.5f+color.getBlue()/255f*0.5f;
+		//return color.getRed()/255f*0.5f+color.getBlue()/255f*0.5f;
+		return color.getBlue()/255f;
 	}
 
 	public static void displayPixels(float[][] pixels, String pictureName) {

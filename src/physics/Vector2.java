@@ -25,25 +25,7 @@ public class Vector2 {
 	 * the angle of the vector in radians
 	 */
 	public double getAngle() {
-		if (y==0) {
-			if (x>0) {
-				return Math.PI/2;
-			}
-			else {
-				return -Math.PI/2;
-			}
-		}
-		if (x>0) {
-			return Math.atan(y/x);
-		}
-		else {
-			if (y>0) {
-				return Math.atan(y/x)+Math.PI;
-			}
-			else {
-				return Math.atan(y/x)-Math.PI;
-			}
-		}
+		return Math.atan2(y, x);
 	}
 
 	public static Vector2 createFromPolar(double r, double theta) {

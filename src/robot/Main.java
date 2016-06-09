@@ -183,9 +183,14 @@ public class Main implements Runnable{
 				ImageLoader.drawImageWithAlpha(image, lastImageClone, topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner);
 			}
 			if (paperType==PaperTypes.NOT_PAPER) {
+				System.out.println("not paper");
 			}
 			game.setTypeOfPaper(paperType);
 			game.setPaper(paper);
+		}
+		else {
+			System.out.println("not paper");
+			game.setTypeOfPaper(PaperTypes.NOT_PAPER);
 		}
 		ArrayList<Point> peaks=new ArrayList<Point>();
 		peaks.add(topLeftCorner);

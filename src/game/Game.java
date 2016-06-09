@@ -6,7 +6,7 @@ public class Game {
 	
 	private Color color=Color.white, paperColor=Color.white;
 	private int notPaperCounter=0, videoCounter=0, simulationCounter=0;
-	private int maxProgress=30;
+	private int maxProgress=30, resetProgress=30;
 	
 	private Movie movie;
 	private boolean playingMovie=false;
@@ -31,11 +31,18 @@ public class Game {
 		if (videoCounter>=maxProgress) {
 			playingMovie=true;
 		}
+		else {
+			playingMovie=false;
+		}
 		if (simulationCounter>=maxProgress&&paper!=null) {
 			playingSim=true;
 			if (sim==null) {
 				sim=new Simulation(paper);
 			}
+		}
+		else {
+			playingSim=false;
+			sim=null;
 		}
 		
 		if (playingMovie) {
@@ -117,23 +124,22 @@ public class Game {
 		switch(paperType) {
 		case SIMULATION_PAPER:
 			simulationCounter++;
+			notPaperCounter=0;
 			break;
 		case VIDEO_PAPER:
 			videoCounter++;
+			notPaperCounter=0;
 			break;
 		case NOT_PAPER:
 			notPaperCounter++;
+			if (notPaperCounter>resetProgress) {
+				notPaperCounter=0;
+				videoCounter=0;
+				simulationCounter=0;
+			}
 			break;
 		default:
 			System.out.println("Invalid paper type in Game class");
-		}
-		if (simulationCounter>maxProgress) {
-			simulationCounter=maxProgress+1;
-			videoCounter=0;
-		}
-		if (videoCounter>maxProgress) {
-			videoCounter=maxProgress+1;
-			simulationCounter=0;
 		}
 	}
 
