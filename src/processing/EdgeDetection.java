@@ -1,7 +1,7 @@
 package processing;
 
 public class EdgeDetection {
-	private static float minIntensity=.12f;//.07f;
+	private static float minIntensity=.07f;//.07f;
 	private static float[][] sobelXKernal={{-1, -2, -1}, {0, 0, 0}, {1, 2, 1}};
 	private static float[][] sobelYKernal={{-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}};
 	

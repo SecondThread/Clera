@@ -29,9 +29,13 @@ public class Game {
 		color=new Color(videoCounter/max, 0, simulationCounter/max);
 		
 		if (videoCounter>=maxProgress) {
-			playingMovie=true;
+			if (!playingMovie) {
+				movie.play();
+				playingMovie=true;
+			}
 		}
 		else {
+			movie=movie.clone();
 			playingMovie=false;
 		}
 		if (simulationCounter>=maxProgress&&paper!=null) {

@@ -15,7 +15,7 @@ public class Ball {
 	private int tailLength=200;
 	
 	private Vector2Editable velocity=new Vector2Editable(x, y);
-	private double gravity=-.4, friction=0.003f, bounceFriction=.93;
+	private double gravity=-.3, friction=0.03f, bounceFriction=.93;
 	
 	public Ball(int x, int y) {
 		this.x=x;
@@ -52,6 +52,9 @@ public class Ball {
 		for (int i=0; i<20; i++) {
 			x+=velocity.getX()/20;
 			y-=velocity.getY()/20;
+			if (y>edges[0].length+radius) {
+				y=2*radius;
+			}
 			if (touchingEdge(edges)) {
 				double angle=getAverageAngle(edges);
 				reflectOffAngle(angle);

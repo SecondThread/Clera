@@ -60,7 +60,7 @@ public class Blur {
 	
 	private static float applySmartGaussianBlurToPixels(float[][] image, int x, int y) {
 		if (3>x||3>y||x+3>=image.length||y+3>=image[0].length) {
-			return 0f;
+			return 0;//image[x][y];
 		}
 		int total=0;
 		for (int dx=0; dx<5; dx++) {
@@ -79,9 +79,5 @@ public class Blur {
 				smartGaussianFliterTotal+=b;
 			}
 		}
-	}
-	
-	private static void applySobelFilter(float[][] image) {
-		
 	}
 }

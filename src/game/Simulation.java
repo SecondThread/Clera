@@ -10,7 +10,7 @@ public class Simulation {
 	private float[][] paper;
 	private Edge[][] edges;
 	private Ball ball;
-	private boolean showLines=true;
+	private boolean showLines=false;
 	
 	public Simulation(Color[][] paper) {
 		this.paper=Window.getNonRedLuminanceOfImage(paper);
