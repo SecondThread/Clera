@@ -4,20 +4,21 @@ import java.awt.Color;
 import java.awt.Point;
 
 public class ImageProcessor {
-	
+
 	public static void applySquareCurve(float[][] oldImage) {
 		applyExponentialCurve(oldImage, 2);
 	}
-	
+
 	/**
-	 * Checks to see if each of the pixels are brighter or less bright than the minimum brightness
-	 * If they are, they are set to aboveIsTrue, otherwise they are set to !aboveIsTrue
+	 * Checks to see if each of the pixels are brighter or less bright than the
+	 * minimum brightness If they are, they are set to aboveIsTrue, otherwise
+	 * they are set to !aboveIsTrue
+	 * 
 	 * @param min
-	 * The minimum value
+	 *            The minimum value
 	 * @param aboveIsTrue
-	 * True if large values should be true, false othewise
-	 * @return
-	 * A new boolean array
+	 *            True if large values should be true, false othewise
+	 * @return A new boolean array
 	 */
 	public static boolean[][] applyCutoff(float min, boolean aboveIsTrue, float[][] oldImage) {
 		boolean[][] toReturn=new boolean[oldImage.length][oldImage[0].length];
@@ -28,7 +29,7 @@ public class ImageProcessor {
 		}
 		return toReturn;
 	}
-	
+
 	public static float[][] getAsFloatArray(boolean[][] boolArray) {
 		float[][] floatArray=new float[boolArray.length][boolArray[0].length];
 		for (int x=0; x<floatArray.length; x++) {
@@ -43,42 +44,43 @@ public class ImageProcessor {
 		}
 		return floatArray;
 	}
-	
+
 	public static void applyExponentialCurve(float[][] oldImage, float exponent) {
 		for (int x=0; x<oldImage.length; x++) {
 			for (int y=0; y<oldImage[x].length; y++) {
-				oldImage[x][y]=(float) Math.pow(oldImage[x][y], exponent);
+				oldImage[x][y]=(float)Math.pow(oldImage[x][y], exponent);
 			}
 		}
 	}
-	
+
 	public static float[][] scaleImage(float[][] oldImage, int newWidth) {
 		int newHeight=newWidth*oldImage[0].length/oldImage.length;
 		float[][] newImage=new float[newWidth][newHeight];
 		for (int x=0; x<newImage.length; x++) {
 			for (int y=0; y<newImage[x].length; y++) {
-				newImage[x][y]=oldImage[(int)((0.0+x)/newWidth*oldImage.length)][(int)((0.0+y)/newHeight*oldImage[0].length)];
+				newImage[x][y]=oldImage[(int)((0.0+x)/newWidth*oldImage.length)][(int)((0.0+y)/newHeight
+						*oldImage[0].length)];
 			}
 		}
 		return newImage;
 	}
-	
+
 	public static Color[][] scaleImage(Color[][] oldImage, int newWidth) {
 		int newHeight=newWidth*oldImage[0].length/oldImage.length;
 		Color[][] newImage=new Color[newWidth][newHeight];
 		for (int x=0; x<newImage.length; x++) {
 			for (int y=0; y<newImage[x].length; y++) {
-				newImage[x][y]=oldImage[(int)((0.0+x)/newWidth*oldImage.length)][(int)((0.0+y)/newHeight*oldImage[0].length)];
+				newImage[x][y]=oldImage[(int)((0.0+x)/newWidth*oldImage.length)][(int)((0.0+y)/newHeight
+						*oldImage[0].length)];
 			}
 		}
 		return newImage;
 	}
-	
-	
+
 	public static void normalize(float[][] image) {
 		float max=0, min=1;
-		for (float[] x:image) {
-			for (float y:x) {
+		for (float[] x : image) {
+			for (float y : x) {
 				max=Math.max(y, max);
 				min=Math.min(y, min);
 			}
@@ -90,7 +92,7 @@ public class ImageProcessor {
 			}
 		}
 	}
-	
+
 	public static float[][] normalize(float[][] image, Point startPoint, Point endPoint) {
 		float[][] toReturn=new float[endPoint.x-startPoint.x][endPoint.y-startPoint.y];
 		for (int x=0; x<toReturn.length; x++) {
@@ -101,5 +103,15 @@ public class ImageProcessor {
 		normalize(toReturn);
 		return toReturn;
 	}
-	
+
+	public static float[][] luminance(Color[][] colors, float rScale, float gScale, float bScale) {
+		float[][] luminance=new float[colors.length][colors[0].length];
+		for (int x=0; x<colors.length; x++) {
+			for (int y=0; y<colors[0].length; y++) {
+				luminance[x][y]=Math.max(
+						colors[x][y].getRed()*rScale+colors[x][y].getGreen()*gScale+colors[x][y].getBlue()*bScale, 0);
+			}
+		}
+		return luminance;
+	}
 }

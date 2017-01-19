@@ -34,6 +34,8 @@ public class Window {
 	private static JFrame frame;
 	public static int lastClickX, lastClickY;
 	
+	public static boolean mirrorMode=true;
+	
 	public static void init() {
 		try {
 			r2d2 = new Robot();
@@ -240,10 +242,20 @@ public class Window {
 			}
 			Graphics graphics = panel.getGraphics();
 			if (fullScreen) {
-				graphics.drawImage(i, 0, 0, panel.getWidth(), panel.getHeight(), null);
+				if (mirrorMode) {
+					graphics.drawImage(i, panel.getWidth(), 0, -panel.getWidth(), panel.getHeight(), null);
+				}
+				else {
+					graphics.drawImage(i, 0, 0, null);
+				}
 			}
 			else {
-				graphics.drawImage(i, 0, 0, null);
+				if (mirrorMode) {
+					graphics.drawImage(i, panel.getWidth(), 0, -panel.getWidth(), panel.getHeight(), null);
+				}
+				else {
+					graphics.drawImage(i, 0, 0, null);
+				}
 			}
 			graphics.dispose();
 		}

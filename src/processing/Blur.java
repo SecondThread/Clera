@@ -5,6 +5,8 @@ public class Blur {
 	private static int[][] smartGaussianFilter= {{2, 4, 5, 4, 2}, {4, 9, 12, 9, 4}, {5, 12, 15, 12, 5}, {4, 9, 12, 9, 4}, {2, 4, 5, 4, 2}};
 	private static int smartGaussianFliterTotal=-1;
 	
+	@Deprecated
+	//use square blur instead; it is much more efficient
 	public static void applyGaussianBlur(float[][] image, int size) {
 		if (size<1||size>10) {
 			System.err.println("Error: Guassian blur size should be between 0 and 10, both exclusive");
@@ -25,6 +27,7 @@ public class Blur {
 		}
 	}
 	
+	@Deprecated
 	private static float applyBlurToPixel(float[][] image, int x, int y, int size) {
 		float total=0, maxTotal=0;
 		if (size>x||size>y||x+size>=image.length||y+size>=image[0].length) {
@@ -80,4 +83,18 @@ public class Blur {
 			}
 		}
 	}
+
+	//TODO finish this
+	public static void squareBlur(float[][] image, int size) {
+		float[][] newImage=new float[image.length][image[0].length];
+		for (int y=0; y<image[0].length; y++) {
+			double total=(size-1)*image[0][y];
+			for (int x=0; x<image.length+size; x++) {
+				total+=image[Math.min(image.length-1, x)][y];
+				total-=image[Math.max(0, x-size)][y];
+				//newImage[x-size/2][y]=
+			}
+		}
+	}
+
 }

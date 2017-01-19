@@ -12,10 +12,10 @@ import processing.ImageProcessor;
 import saving.ScreenSetup;
 import templateMatching.Template;
 import templateMatching.TemplateSaver;
-
+//RUN THIS SECOND
 public class Main implements Runnable{
 	private static boolean setupPicturePosition=false, editTemplates=false;
-	public static boolean useSameWindow=true;
+	public static boolean useSameWindow=false;
 	
 	public static final String topLeftTemplatesLocation="templates.txt", topRightTemplatesLocation="templatesTR.txt",
 					bottomRightTemplatesLocation="templatesBR.txt", bottomLeftTemplatesLocation="templatesBL.txt";
@@ -32,6 +32,8 @@ public class Main implements Runnable{
 	
 	private static volatile Point topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner;
 	private static volatile Color[][] lastImage;
+	
+	public static double angle=0f;
 	
 	public static void main(String[] args) {
 		(new Thread(new Main())).start();
@@ -195,8 +197,18 @@ public class Main implements Runnable{
 		peaks.add(topRightCorner);
 		peaks.add(bottomLeftCorner);
 		peaks.add(bottomRightCorner);
-
+		
+		angle=getDirection(topLeftCorner, topRightCorner, bottomLeftCorner, bottomRightCorner);
+		
 		Window.displayPixelsWithPeaks(lastImageClone, peaks, topLeftCorner, "FinalImage");
 	}
+	
+	
+	private static double getDirection(Point topLeft, Point topRight, Point bottomLeft, Point bottomRight) {
+		Point topMid=new Point((topLeft.x+topRight.x)/2, (topLeft.y+topRight.y)/2);
+		Point bottomMid=new Point((bottomLeft.x+bottomRight.x)/2, (bottomLeft.y+bottomRight.y)/2);
+		return Math.atan2(topMid.y-bottomMid.y, bottomMid.x-topMid.x);
+	}
+	
 	
 }

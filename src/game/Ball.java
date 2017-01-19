@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import physics.Vector2Editable;
 import processing.Edge;
+import robot.Main;
 
 public class Ball {
 	private double x, y;
@@ -24,7 +25,8 @@ public class Ball {
 	}
 	
 	public void update(Edge[][] edges) {
-		velocity.setY(velocity.getY()+gravity);
+		velocity.setY(velocity.getY()+-Math.sin(Main.angle)*gravity);
+		velocity.setX(velocity.getX()+2*Math.cos(Main.angle)*gravity);
 		applyFriction();
 		move(edges);
 	}
