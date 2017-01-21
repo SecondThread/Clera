@@ -34,11 +34,23 @@ public class testerMain {
 		//Window.displayPixels(luminance, "Peg");
 		
 		
+		
 		ArrayList<Point> bestPoints=new ArrayList<Point>();
 		bestPoints.addAll(getBestPoints(topLeftTemplate, luminance));
 		bestPoints.addAll(getBestPoints(topRightTemplate, luminance));
 		bestPoints.addAll(getBestPoints(bottomLeftTemplate, luminance));
 		bestPoints.addAll(getBestPoints(bottomRightTemplate, luminance));
+		
+		
+		
+		
+		ProportionalTester propTester = new ProportionalTester();
+		propTester.sendPoints(bestPoints);
+		
+		
+		
+		
+		
 		System.out.println("done...");
 		//Window.displayPixelsWithPeaks(luminance, bestPoints, bestPoints.get(0), "");
 		for (Point p:bestPoints) {
@@ -46,6 +58,7 @@ public class testerMain {
 		}
 		Window.displayPixelsWithPeaks(luminance, bestPoints, bestPoints.get(0), "");
 		System.out.println("done for real");
+		
 	}
 	
 	private static ArrayList<Point> getBestPoints(float[][] template, float[][] image) {
@@ -70,7 +83,13 @@ public class testerMain {
 			}
 		}
 		return toReturn;
+		
+		
 	}
+	
+	
+	
+	
 	
 	
 	
