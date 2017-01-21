@@ -3,24 +3,22 @@ package processing;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
+import com.github.sarxos.webcam.Webcam;
 
 import robot.Window;
 import templateMatching.TemplateMatcher;
 
 public class testerMain {
+	
+	private static Webcam webcam;
+	
 	public static void main(String[] args) {
 		BufferedImage image=null;
-		try {
-			image=ImageIO.read(new File("C:\\Users\\David\\Pictures\\Vision test\\PiTest.png"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		webcam=Webcam.getDefault();
+		image=getImageFromWebcam(webcam);
+		//image=ImageIO.read(new File("C:\\Users\\David\\Pictures\\Vision test\\PiTest.png"));
 		Color[][] asColors=new Color[image.getWidth()][image.getHeight()];
 
 		for (int x=0; x<asColors.length; x++) {
@@ -70,6 +68,10 @@ public class testerMain {
 			}
 		}
 		return toReturn;
+	}
+	
+	private static BufferedImage getImageFromWebcam(Webcam webcam) {
+		return webcam.getImage();
 	}
 	
 	
