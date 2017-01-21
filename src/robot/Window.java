@@ -165,7 +165,7 @@ public class Window {
 				}
 			}
 		}
-		drawImage(toDraw, pictureName, true, true);
+		drawImage(toDraw, pictureName, true);
 	}
 
 	private static float[][] flipImageHorizontally(float[][] toFlip) {

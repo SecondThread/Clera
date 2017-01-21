@@ -7,6 +7,10 @@ import processing.ImageProcessor;
 public class Template {
 	private float[][] template;
 	
+	public Template(float[][] template) {
+		this.template=template;
+	}
+	
 	public Template(String saveData) {
 		String[] parts=saveData.split(" ");
 		int width=Integer.parseInt(parts[0]);
