@@ -2,6 +2,7 @@ package processing;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +17,7 @@ public class testerMain {
 	public static void main(String[] args) {
 		BufferedImage image=null;
 		try {
-			image=ImageIO.read(new File("C:\\Users\\David\\Pictures\\Vision test\\PiTest.png"));
+			image=ImageIO.read(new File("D:\\Code\\no.png"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -43,19 +44,19 @@ public class testerMain {
 		
 		
 		
+		RectangleChecker checker = new RectangleChecker(bestPoints);
+		checker.validatePoints();
+		ArrayList<Point> betterPoints = checker.getBetterPoints();
 		
-		ProportionalTester propTester = new ProportionalTester();
-		propTester.sendPoints(bestPoints);
-		
-		
+		PegFinder finder = new PegFinder(betterPoints);
+		System.out.println("X of middle" + finder.getX());
+		System.out.println("Y of middle" + finder.getY());
 		
 		
 		
 		System.out.println("done...");
 		//Window.displayPixelsWithPeaks(luminance, bestPoints, bestPoints.get(0), "");
-		for (Point p:bestPoints) {
-			System.out.println(p);
-		}
+		
 		Window.displayPixelsWithPeaks(luminance, bestPoints, bestPoints.get(0), "");
 		System.out.println("done for real");
 		
