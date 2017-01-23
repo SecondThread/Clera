@@ -17,7 +17,7 @@ public class testerMain {
 	public static void main(String[] args) {
 		BufferedImage image=null;
 		try {
-			image=ImageIO.read(new File("D:\\Code\\no.png"));
+			image=ImageIO.read(new File("D:\\Code\\testImage2.png"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -45,12 +45,14 @@ public class testerMain {
 		
 		
 		RectangleChecker checker = new RectangleChecker(bestPoints);
-		checker.validatePoints();
+		System.out.println("Overall Check: " + checker.validatePoints());
 		ArrayList<Point> betterPoints = checker.getBetterPoints();
 		
+		
+		
 		PegFinder finder = new PegFinder(betterPoints);
-		System.out.println("X of middle" + finder.getX());
-		System.out.println("Y of middle" + finder.getY());
+		System.out.println("X of middle  " + finder.getX());
+		System.out.println("Y of middle  " + finder.getY());
 		
 		
 		

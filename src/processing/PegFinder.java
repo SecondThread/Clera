@@ -10,6 +10,7 @@ public class PegFinder {
 
 	public PegFinder(ArrayList<Point> thePoints) {
 		points = thePoints;
+		
 	}
 
 	public double getX() {
@@ -19,11 +20,7 @@ public class PegFinder {
 		}
 		Arrays.sort(xValues);
 
-		System.out.println();
-		for(double x: xValues)
-		{
-			System.out.print(x + "  ");
-		}
+		
 		double mid1 = xValues[3];
 		double mid2 = xValues[4];
 		return (mid1 + mid2) / 2;
