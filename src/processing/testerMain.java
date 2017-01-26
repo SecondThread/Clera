@@ -82,6 +82,9 @@ public class testerMain {
 		toReturn.addAll(topRight.bestPoints);
 		toReturn.addAll(bottomLeft.bestPoints);
 		toReturn.addAll(bottomRight.bestPoints);
+		
+		toReturn = PegVisionUtils.generateNewPoints(toReturn);
+		
 		return toReturn;
 		
 		
