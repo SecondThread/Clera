@@ -3,6 +3,7 @@ package processing;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -51,6 +52,7 @@ public class testerMain {
 		// bestPoints.get(0), "");
 		//Window.displayPixelsWithPeaks(luminance, bestPoints, bestPoints.get(0), "");
 		System.out.println("done for real");
+		
 	}
 	
 	private static ArrayList<Point> runThreads(float[][] image) {
@@ -81,6 +83,8 @@ public class testerMain {
 		toReturn.addAll(bottomLeft.bestPoints);
 		toReturn.addAll(bottomRight.bestPoints);
 		return toReturn;
+		
+		
 	}
 
 	private static BufferedImage getImageFromWebcam(Webcam webcam) {
