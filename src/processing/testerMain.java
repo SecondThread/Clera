@@ -17,7 +17,7 @@ public class testerMain {
 	public static void main(String[] args) {
 		BufferedImage image=null;
 		try {
-			image=ImageIO.read(new File("D:\\Code\\testImage2.png"));
+			image=ImageIO.read(new File("D:\\Code\\1.jpg"));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -29,7 +29,7 @@ public class testerMain {
 				asColors[x][y]=new Color(image.getRGB(x, y));
 			}
 		}
-		float[][] luminance=ImageProcessor.luminance(asColors, -.2f, 1.0f, -.2f);
+		float[][] luminance=ImageProcessor.luminance(asColors, .33f, .33f, .33f);
 		ImageProcessor.normalize(luminance);
 		ImageProcessor.applyExponentialCurve(luminance, 3);
 		//Window.displayPixels(luminance, "Peg");
@@ -44,15 +44,14 @@ public class testerMain {
 		
 		
 		
-		RectangleChecker checker = new RectangleChecker(bestPoints);
-		System.out.println("Overall Check: " + checker.validatePoints());
-		ArrayList<Point> betterPoints = checker.getBetterPoints();
+		
+		ArrayList<Point> betterPoints = PegVisionUtils.generateNewPoints(bestPoints);
 		
 		
 		
-		PegFinder finder = new PegFinder(betterPoints);
-		System.out.println("X of middle  " + finder.getX());
-		System.out.println("Y of middle  " + finder.getY());
+		
+		Point peg = PegVisionUtils.findPeg(betterPoints);
+		System.out.println("Peg: " + peg);
 		
 		
 		
