@@ -2,13 +2,11 @@ package images;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.plaf.basic.BasicLabelUI;
 
 import robot.Main;
 

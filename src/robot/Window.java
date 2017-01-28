@@ -3,7 +3,6 @@ package robot;
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -16,8 +15,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -297,4 +299,33 @@ public class Window {
 	public static Color[][] getLastImage() {
 		return lastImage;
 	}
+
+	public static void saveImage(float[][] pixels, ArrayList<Point> peaks, String name) {
+		BufferedImage toDraw = new BufferedImage(pixels.length, pixels[0].length, BufferedImage.TYPE_INT_ARGB);
+		for (int x = 0; x < pixels.length; x++) {
+			for (int y = 0; y < pixels[x].length; y++) {
+				Color inRGB =new Color(pixels[x][y], pixels[x][y], pixels[x][y]);
+				toDraw.setRGB(x, y, inRGB.getRGB());
+			}
+		}
+		Color peakColor = Color.red, targetColor = Color.green;
+		
+		if (peaks!=null) {
+			for (Point peak : peaks) {
+				if (peak.x>1&&peak.y>1&&peak.x+2<pixels.length&&peak.y+2<pixels[0].length) {
+					toDraw.setRGB(peak.x, peak.y, peakColor.getRGB());
+					toDraw.setRGB(peak.x - 1, peak.y, peakColor.getRGB());
+					toDraw.setRGB(peak.x + 1, peak.y, peakColor.getRGB());
+					toDraw.setRGB(peak.x, peak.y - 1, peakColor.getRGB());
+					toDraw.setRGB(peak.x, peak.y + 1, peakColor.getRGB());
+				}
+			}
+		}
+		try {
+			ImageIO.write(toDraw, "PNG", new File(name));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 }

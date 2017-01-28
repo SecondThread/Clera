@@ -3,7 +3,6 @@ package processing;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
