@@ -13,6 +13,7 @@ import processing.ImageProcessor;
 import processing.ImageSearchingThread;
 import processing.PegVisionUtils;
 import processing.TurnAngle;
+import robot.Window;
 
 public class PiClient {
 
@@ -25,8 +26,9 @@ public class PiClient {
 		NetworkTable table = NetworkTable.getTable("VisionTable");
 		table.addTableListener(new ITableListener() {
 			public void valueChanged(ITable source, String key, Object value, boolean isNew) {
+				System.out.println("Value changed, key: "+key);
 				if (key.equals("processVision")) {
-					if (table.getBoolean(key)) {
+					if (table.getBoolean(key, false)) {
 						table.putNumber("degreesToTurn", getDegreesToTurn(0));
 						table.putBoolean("processVision", false);
 					}
@@ -39,7 +41,6 @@ public class PiClient {
 		webcam=Webcam.getDefault();
 		webcam.setViewSize(new Dimension(320, 240));
 		webcam.open();
-		System.out.println(webcam==null);
 	}
 
 	public static float getDegreesToTurn(int runCounter) {
@@ -47,8 +48,6 @@ public class PiClient {
 		ArrayList<Point> bestPoints=null;
 		System.out.println("start: "+System.currentTimeMillis());
 		BufferedImage image=getImageFromWebcam(webcam);
-		// image=ImageIO.read(new File("C:\\Users\\David\\Pictures\\Vision
-		// test\\PiTest.png"));
 		Color[][] asColors=new Color[image.getWidth()][image.getHeight()];
 
 		for (int x=0; x<asColors.length; x++) {
@@ -59,18 +58,19 @@ public class PiClient {
 		luminance=ImageProcessor.luminance(asColors, -.2f, 1.0f, -.2f);
 		ImageProcessor.normalize(luminance);
 		ImageProcessor.applyExponentialCurve(luminance, 3);
-		// Window.displayPixels(luminance, "Peg");
 
 		bestPoints=new ArrayList<Point>();
 		bestPoints=runThreads(luminance);
+		//null if points are wrong
 		if (bestPoints==null) {
 			if (runCounter>=3) {
 				return 0;
 			}
+			//try it again if we got things wrong
 			return getDegreesToTurn(runCounter+1);
 		}
 		System.out.println("done: "+System.currentTimeMillis());
-		//Window.saveImage(luminance, bestPoints, "result.png");
+		Window.saveImage(luminance, bestPoints, "result.png");
 		Point peg=PegVisionUtils.findPeg(bestPoints);
 		return TurnAngle.getTurnAngle(peg);
 	}
@@ -103,6 +103,7 @@ public class PiClient {
 		toReturn.addAll(bottomLeft.bestPoints);
 		toReturn.addAll(bottomRight.bestPoints);
 
+		//null if the points are wrong
 		toReturn=PegVisionUtils.generateNewPoints(toReturn);
 
 		return toReturn;
