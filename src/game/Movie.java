@@ -8,7 +8,6 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
 import images.ImageLoader;
-import robot.Main;
 
 public class Movie {
 	private String[] frameLocations={"PhysicsVideoIntro.png", "PhysicsVideoIntroVision.png", "PhysicsVideoIntroVisionIlluminati.png",

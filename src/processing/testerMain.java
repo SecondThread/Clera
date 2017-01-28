@@ -3,14 +3,12 @@ package processing;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Polygon;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import com.github.sarxos.webcam.Webcam;
 
 import robot.Window;
-import templateMatching.TemplateMatcher;
 
 public class testerMain {
 

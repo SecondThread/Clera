@@ -6,6 +6,9 @@ import java.util.ArrayList;
 
 import com.github.sarxos.webcam.Webcam;
 
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.tables.ITable;
+import edu.wpi.first.wpilibj.tables.ITableListener;
 import processing.ImageProcessor;
 import processing.ImageSearchingThread;
 import processing.PegVisionUtils;
@@ -15,6 +18,23 @@ public class PiClient {
 
 	private static Webcam webcam;
 
+	public static void main(String[] a) {
+		init();
+		NetworkTable.setClientMode();
+		NetworkTable.setIPAddress("roboRIO-2202-FRC.local");
+		NetworkTable table = NetworkTable.getTable("VisionTable");
+		table.addTableListener(new ITableListener() {
+			public void valueChanged(ITable source, String key, Object value, boolean isNew) {
+				if (key.equals("processVision")) {
+					if (table.getBoolean(key)) {
+						table.putNumber("degreesToTurn", getDegreesToTurn(0));
+						table.putBoolean("processVision", false);
+					}
+				}
+			}
+		});
+	}
+	
 	public static void init() {
 		webcam=Webcam.getDefault();
 		webcam.setViewSize(new Dimension(320, 240));
