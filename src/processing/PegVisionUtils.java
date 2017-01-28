@@ -7,13 +7,40 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.swing.plaf.synth.SynthSeparatorUI;
+
 public class PegVisionUtils {
 
 	// All of the tolerances used, can and should be changed after more testing is done
 
-	public static final double RATIO_TOLERANCE = 1, DISTANCE_TOLERANCE = 3, SLOPE_TOLERANCE = 3,
-			ALIGNMENT_TOLERANCE = 50, AREA_TOLERANCE = 30000, HEIGHT_WIDTH_RATIO = 2.5, DISTANCE_WIDTH_RATIO = 4.125;
+	public static final double RATIO_TOLERANCE = 3, DISTANCE_TOLERANCE = 3, SLOPE_TOLERANCE = 5,
+			ALIGNMENT_TOLERANCE = 50, AREA_TOLERANCE = 30000, HEIGHT_WIDTH_RATIO = 5, DISTANCE_WIDTH_RATIO = 4.125;
 
+	
+	//lengthofDumbo is 10.25 inches and pixels is the calculated length of dumbo in pixels
+	//lengthinPixels is the total width of the screen is pixels
+	//this was written by gerch not by billy
+	public static double distance(double lengthofDumbo, double fovDegrees, double lengthinPixels, ArrayList<Point> points){
+		Point leftMost = new Point(Integer.MAX_VALUE, 0);
+		Point rightMost = new Point(0,0);
+		for(Point p: points)
+		{
+			if(p.getX()<leftMost.getX())
+			{
+				leftMost = p;
+			}
+			if(p.getX()>rightMost.getX())
+			{
+				rightMost = p;
+			}
+		}
+		
+		double pixels = rightMost.getX() - leftMost.getX();
+		double distance = lengthofDumbo/(2*Math.tan((fovDegrees*pixels)/(2*lengthinPixels)));
+	return distance;
+	}
+	
+	
 	/**
 	 * generates the 16 possible quadrilaterals that can be made from the 8 points
 	 * 
@@ -48,24 +75,85 @@ public class PegVisionUtils {
 	 * @return ArrayList<Polygon[]> groups of triangles, arranged in groups of four, based on the quadrilateral they came from
 	 */
 
-	private static ArrayList<Polygon[]> generateTriangles(ArrayList<Point> points) {
+	private static ArrayList<Point[][]> generateTriangles(ArrayList<Point> points) {
 		ArrayList<Point[]> rectangles = generateQuadrilaterals(points);
-		ArrayList<Polygon[]> triangleGroups = new ArrayList<Polygon[]>();
+		ArrayList<Point[][]> triangleGroups = new ArrayList<Point[][]>();
 
 		for (Point[] rect : rectangles) {
-			Polygon[] similiarTriangles = new Polygon[4];
+			Point[][] similiarTriangles = new Point[4][3];
 			for (int i = 0; i < 4; i++) {
-				Polygon triangle = new Polygon();
+				Point[] triangle = new Point[3];
+				int counter = 0;
 				for (int n = 0; n < 4; n++) {
+					
 					if (n != i) {
-						triangle.addPoint((int) rect[n].getX(), (int) rect[n].getY());
+						triangle[counter] = (new Point(rect[n].x, rect[n].y));
+						counter++;
 					}
 				}
 				similiarTriangles[i] = triangle;
 			}
-			triangleGroups.add(similiarTriangles);
+			if (similiarTriangles.length != 0) {
+				triangleGroups.add(similiarTriangles);
+			}
+			
 		}
 		return triangleGroups;
+	}
+		
+		
+		
+	
+
+	private static boolean checkOrientation(Point[] triangle, ArrayList<Point> points) {
+		System.out.println("checking orientation...");
+		/*
+		 * Actuall order of points 
+		 * tl tl
+		 * bl bl
+		 * tr tr
+		 * br br
+		 */
+		ArrayList<Point> tops = new ArrayList<Point>();
+		ArrayList<Point> bottoms = new ArrayList<Point>();
+		ArrayList<Point> rights = new ArrayList<Point>();
+		ArrayList<Point> lefts = new ArrayList<Point>();
+		for(Point p : triangle) {
+			if(p.equals(points.get(0)) || p.equals(points.get(1)) ||p.equals(points.get(4)) ||p.equals(points.get(5))) {
+				tops.add(p);
+			}
+			else if(p.equals(points.get(2)) || p.equals(points.get(3)) ||p.equals(points.get(6)) ||p.equals(points.get(7))) {
+				bottoms.add(p);
+			}
+			if(p.equals(points.get(4)) || p.equals(points.get(5)) ||p.equals(points.get(6)) ||p.equals(points.get(7))) {
+				rights.add(p);
+			}
+			if(p.equals(points.get(0)) || p.equals(points.get(1)) ||p.equals(points.get(2)) ||p.equals(points.get(3))) {
+				lefts.add(p);
+			}
+		}
+		
+		
+		for(Point top : tops) {
+			for(Point bottom : bottoms) {
+				if(top.y>bottom.y) {
+					return false;
+				}
+			}
+		}
+		
+		for(Point right : rights) {
+			for(Point left : lefts) {
+				if(right.x<left.x) {
+					return false;
+				}
+			}
+		}
+		
+		
+		
+		return true;
+
 	}
 
 	/**
@@ -76,37 +164,50 @@ public class PegVisionUtils {
 	 * @return ArrayList<Rectangle> holds the two good rectangles found, if good rectangles cannot be found then the arraylist will contain a <code> new Rectangle()</code> (x=0,y=0,width=0,height=0)
 	 */
 
-	private static ArrayList<Rectangle> validateRectangles(ArrayList<Polygon[]> triangles) {
+	private static ArrayList<Rectangle> validateRectangles(ArrayList<Point[][]> triangles, ArrayList<Point> points) {
 		ArrayList<Rectangle> goodRectangles = new ArrayList<Rectangle>();
 		goodRectangles.add(new Rectangle());
 		goodRectangles.add(new Rectangle());
 
 		boolean hasOneGoodTriangle = false;
 		boolean hasTwoGoodTriangle = false;
+		
+		
 
-		for (Polygon[] g : triangles) {
+		for (Point[][] g : triangles) {
 			if (hasOneGoodTriangle && hasTwoGoodTriangle) {
 				break;
 			}
-			for (Polygon t : g) {
-				Rectangle bounds = t.getBounds();
-				if ((bounds.intersects((goodRectangles.get(0))))) {
-					break;
+			for (Point[] t : g) {
+				if (!(checkOrientation(t, points))) {
+					System.out.println("check failed");
+					continue;
 				}
-				if (Math.abs((bounds.getHeight() / bounds.getWidth()) - HEIGHT_WIDTH_RATIO) < RATIO_TOLERANCE) {
-					if (checkRightTriangle(t)) {
-						if (hasOneGoodTriangle) {
-
-							hasTwoGoodTriangle = true;
-							goodRectangles.set(1, bounds);
-
-						} else {
-							hasOneGoodTriangle = true;
-							goodRectangles.set(0, bounds);
-						}
+				System.out.println("check success");
+					Polygon p = new Polygon();
+					for (Point point : t) {
+						p.addPoint(point.x, point.y);
+						
+					}
+					Rectangle bounds = p.getBounds();
+					if ((bounds.intersects((goodRectangles.get(0))))) {
 						break;
 					}
-				}
+					if (Math.abs((bounds.getHeight() / bounds.getWidth()) - HEIGHT_WIDTH_RATIO) < RATIO_TOLERANCE) {
+						if (checkRightTriangle(p)) {
+							if (hasOneGoodTriangle) {
+
+								hasTwoGoodTriangle = true;
+								goodRectangles.set(1, bounds);
+
+							} else {
+								hasOneGoodTriangle = true;
+								goodRectangles.set(0, bounds);
+							}
+							break;
+						}
+					}
+				
 			}
 		}
 		return goodRectangles;
@@ -208,7 +309,6 @@ public class PegVisionUtils {
 		return (Math.abs(slope - HEIGHT_WIDTH_RATIO) < SLOPE_TOLERANCE);
 	}
 
-	
 	/**
 	 * completes the final checks after 2 rectangles are found
 	 * 
@@ -272,8 +372,9 @@ public class PegVisionUtils {
 	 */
 
 	public static ArrayList<Point> generateNewPoints(ArrayList<Point> points) {
-		ArrayList<Polygon[]> triangles = generateTriangles(points);
-		ArrayList<Rectangle> goodRects = validateRectangles(triangles);
+		System.out.println( "OG POINTS  \n\n" + points + "\n\n");
+		ArrayList<Point[][]> triangles = generateTriangles(points);
+		ArrayList<Rectangle> goodRects = validateRectangles(triangles, points);
 		Rectangle goodRect1 = goodRects.get(0);
 		Rectangle goodRect2 = goodRects.get(1);
 
