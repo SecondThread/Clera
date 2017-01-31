@@ -21,7 +21,7 @@ public class PegVisionUtils {
 	// dumbo in pixels
 	// lengthinPixels is the total width of the screen is pixels
 	// this was written by gerch not by billy
-	public static double distance(ArrayList<Point> points) {
+	public static double calcDistance(ArrayList<Point> points) {
 
 		Point leftMost = new Point(Integer.MAX_VALUE, 0);
 		Point rightMost = new Point(0, 0);
