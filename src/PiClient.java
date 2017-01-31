@@ -18,6 +18,7 @@ import robot.Window;
 public class PiClient {
 
 	private static Webcam webcam;
+	private static ArrayList<Point> foundPoints;
 
 	public static void main(String[] a) {
 		init();
@@ -31,6 +32,7 @@ public class PiClient {
 					if (table.getBoolean(key, false)) {
 						table.putNumber("degreesToTurn", getDegreesToTurn(0));
 						table.putBoolean("processVision", false);
+						table.putNumber("distanceToPegInches", PegVisionUtils.calcDistance(PegVisionUtils.generateNewPoints(foundPoints)));
 					}
 				}
 			}
@@ -71,6 +73,7 @@ public class PiClient {
 		}
 		System.out.println("done: "+System.currentTimeMillis());
 		Window.saveImage(luminance, bestPoints, "result.png");
+		foundPoints = bestPoints;
 		Point peg=PegVisionUtils.findPeg(bestPoints);
 		return TurnAngle.getTurnAngle(peg);
 	}
