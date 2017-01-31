@@ -26,7 +26,7 @@ public class PiClient {
 		NetworkTable table = NetworkTable.getTable("VisionTable");
 		table.addTableListener(new ITableListener() {
 			public void valueChanged(ITable source, String key, Object value, boolean isNew) {
-				System.out.println("Value changed, key: "+key);
+				System.out.println("Value changed, key: " + key);
 				if (key.equals("processVision")) {
 					if (table.getBoolean(key, false)) {
 						table.putNumber("degreesToTurn", getDegreesToTurn(0));

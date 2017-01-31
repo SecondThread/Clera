@@ -10,42 +10,44 @@ import javax.swing.plaf.synth.SynthSeparatorUI;
 
 public class PegVisionUtils {
 
-	// All of the tolerances used, can and should be changed after more testing is done
+	// All of the tolerances used, can and should be changed after more testing
+	// is done
 
 	public static final double RATIO_TOLERANCE = 3, DISTANCE_TOLERANCE = 3, SLOPE_TOLERANCE = 5,
-			ALIGNMENT_TOLERANCE = 50, AREA_TOLERANCE = 30000, HEIGHT_WIDTH_RATIO = 5, DISTANCE_WIDTH_RATIO = 4.125;
+			ALIGNMENT_TOLERANCE = 50, AREA_TOLERANCE = 30000, HEIGHT_WIDTH_RATIO = 5, DISTANCE_WIDTH_RATIO = 4.125,
+			LENGTH_OF_DUMBO = 10.25, FOV_IN_DEGREES = 50, LENGTH_IN_PIXELS = 320;;
 
-	
-	//lengthofDumbo is 10.25 inches and pixels is the calculated length of dumbo in pixels
-	//lengthinPixels is the total width of the screen is pixels
-	//this was written by gerch not by billy
-	public static double distance(double lengthofDumbo, double fovDegrees, double lengthinPixels, ArrayList<Point> points){
+	// lengthofDumbo is 10.25 inches and pixels is the calculated length of
+	// dumbo in pixels
+	// lengthinPixels is the total width of the screen is pixels
+	// this was written by gerch not by billy
+	public static double distance(ArrayList<Point> points) {
+
 		Point leftMost = new Point(Integer.MAX_VALUE, 0);
-		Point rightMost = new Point(0,0);
-		for(Point p: points)
-		{
-			if(p.getX()<leftMost.getX())
-			{
+		Point rightMost = new Point(0, 0);
+		for (Point p : points) {
+			if (p.getX() < leftMost.getX()) {
 				leftMost = p;
 			}
-			if(p.getX()>rightMost.getX())
-			{
+			if (p.getX() > rightMost.getX()) {
 				rightMost = p;
 			}
 		}
-		
+
 		double pixels = rightMost.getX() - leftMost.getX();
-		double distance = lengthofDumbo/(2*Math.tan((fovDegrees*pixels)/(2*lengthinPixels)));
-	return distance;
+		double distance = LENGTH_OF_DUMBO / (2 * Math.tan((FOV_IN_DEGREES * pixels) / (2 * LENGTH_IN_PIXELS)));
+		return distance;
 	}
-	
-	
+
 	/**
-	 * generates the 16 possible quadrilaterals that can be made from the 8 points
+	 * generates the 16 possible quadrilaterals that can be made from the 8
+	 * points
 	 * 
-	 * @return ArrayList<Point[]> an ArrayList of Point[]'s that hold the four points of each quadrilateral
+	 * @return ArrayList<Point[]> an ArrayList of Point[]'s that hold the four
+	 *         points of each quadrilateral
 	 * @param points
-	 *            ArrayList of 8 points, hopefully the corners of the retroflective tape
+	 *            ArrayList of 8 points, hopefully the corners of the
+	 *            retroflective tape
 	 */
 
 	private static ArrayList<Point[]> generateQuadrilaterals(ArrayList<Point> points) {
@@ -67,11 +69,14 @@ public class PegVisionUtils {
 	}
 
 	/**
-	 * Generates 64 triangles, 4 from each quadrilateral generated in <code>generateQuadrilaterals</code>
+	 * Generates 64 triangles, 4 from each quadrilateral generated in
+	 * <code>generateQuadrilaterals</code>
 	 * 
 	 * @param points
-	 *            ArrayList of 8 points, hopefully the corners of the retroflective tape
-	 * @return ArrayList<Polygon[]> groups of triangles, arranged in groups of four, based on the quadrilateral they came from
+	 *            ArrayList of 8 points, hopefully the corners of the
+	 *            retroflective tape
+	 * @return ArrayList<Polygon[]> groups of triangles, arranged in groups of
+	 *         four, based on the quadrilateral they came from
 	 */
 
 	private static ArrayList<Point[][]> generateTriangles(ArrayList<Point> points) {
@@ -84,7 +89,7 @@ public class PegVisionUtils {
 				Point[] triangle = new Point[3];
 				int counter = 0;
 				for (int n = 0; n < 4; n++) {
-					
+
 					if (n != i) {
 						triangle[counter] = (new Point(rect[n].x, rect[n].y));
 						counter++;
@@ -95,72 +100,68 @@ public class PegVisionUtils {
 			if (similiarTriangles.length != 0) {
 				triangleGroups.add(similiarTriangles);
 			}
-			
+
 		}
 		return triangleGroups;
 	}
-		
-		
-		
-	
 
 	private static boolean checkOrientation(Point[] triangle, ArrayList<Point> points) {
 		System.out.println("checking orientation...");
 		/*
-		 * Actuall order of points 
-		 * tl tl
-		 * bl bl
-		 * tr tr
-		 * br br
+		 * Actuall order of points tl tl bl bl tr tr br br
 		 */
 		ArrayList<Point> tops = new ArrayList<Point>();
 		ArrayList<Point> bottoms = new ArrayList<Point>();
 		ArrayList<Point> rights = new ArrayList<Point>();
 		ArrayList<Point> lefts = new ArrayList<Point>();
-		for(Point p : triangle) {
-			if(p.equals(points.get(0)) || p.equals(points.get(1)) ||p.equals(points.get(4)) ||p.equals(points.get(5))) {
+		for (Point p : triangle) {
+			if (p.equals(points.get(0)) || p.equals(points.get(1)) || p.equals(points.get(4))
+					|| p.equals(points.get(5))) {
 				tops.add(p);
-			}
-			else if(p.equals(points.get(2)) || p.equals(points.get(3)) ||p.equals(points.get(6)) ||p.equals(points.get(7))) {
+			} else if (p.equals(points.get(2)) || p.equals(points.get(3)) || p.equals(points.get(6))
+					|| p.equals(points.get(7))) {
 				bottoms.add(p);
 			}
-			if(p.equals(points.get(4)) || p.equals(points.get(5)) ||p.equals(points.get(6)) ||p.equals(points.get(7))) {
+			if (p.equals(points.get(4)) || p.equals(points.get(5)) || p.equals(points.get(6))
+					|| p.equals(points.get(7))) {
 				rights.add(p);
 			}
-			if(p.equals(points.get(0)) || p.equals(points.get(1)) ||p.equals(points.get(2)) ||p.equals(points.get(3))) {
+			if (p.equals(points.get(0)) || p.equals(points.get(1)) || p.equals(points.get(2))
+					|| p.equals(points.get(3))) {
 				lefts.add(p);
 			}
 		}
-		
-		
-		for(Point top : tops) {
-			for(Point bottom : bottoms) {
-				if(top.y>bottom.y) {
+
+		for (Point top : tops) {
+			for (Point bottom : bottoms) {
+				if (top.y > bottom.y) {
 					return false;
 				}
 			}
 		}
-		
-		for(Point right : rights) {
-			for(Point left : lefts) {
-				if(right.x<left.x) {
+
+		for (Point right : rights) {
+			for (Point left : lefts) {
+				if (right.x < left.x) {
 					return false;
 				}
 			}
 		}
-		
-		
-		
+
 		return true;
 
 	}
 
 	/**
-	 * Validates thats the passed group of triangles contain two triangles whose rectangle bounds are 5:2
+	 * Validates thats the passed group of triangles contain two triangles whose
+	 * rectangle bounds are 5:2
 	 * 
 	 * @param triangles
-	 *            the group of triangles to be checked, sorted in Polygon[] by the quadrilaterals they came from
-	 * @return ArrayList<Rectangle> holds the two good rectangles found, if good rectangles cannot be found then the arraylist will contain a <code> new Rectangle()</code> (x=0,y=0,width=0,height=0)
+	 *            the group of triangles to be checked, sorted in Polygon[] by
+	 *            the quadrilaterals they came from
+	 * @return ArrayList<Rectangle> holds the two good rectangles found, if good
+	 *         rectangles cannot be found then the arraylist will contain a
+	 *         <code> new Rectangle()</code> (x=0,y=0,width=0,height=0)
 	 */
 
 	private static ArrayList<Rectangle> validateRectangles(ArrayList<Point[][]> triangles, ArrayList<Point> points) {
@@ -170,8 +171,6 @@ public class PegVisionUtils {
 
 		boolean hasOneGoodTriangle = false;
 		boolean hasTwoGoodTriangle = false;
-		
-		
 
 		for (Point[][] g : triangles) {
 			if (hasOneGoodTriangle && hasTwoGoodTriangle) {
@@ -183,43 +182,45 @@ public class PegVisionUtils {
 					continue;
 				}
 				System.out.println("check success");
-					Polygon p = new Polygon();
-					for (Point point : t) {
-						p.addPoint(point.x, point.y);
-						
-					}
-					Rectangle bounds = p.getBounds();
-					if ((bounds.intersects((goodRectangles.get(0))))) {
+				Polygon p = new Polygon();
+				for (Point point : t) {
+					p.addPoint(point.x, point.y);
+
+				}
+				Rectangle bounds = p.getBounds();
+				if ((bounds.intersects((goodRectangles.get(0))))) {
+					break;
+				}
+				if (Math.abs((bounds.getHeight() / bounds.getWidth()) - HEIGHT_WIDTH_RATIO) < RATIO_TOLERANCE) {
+					if (checkRightTriangle(p)) {
+						if (hasOneGoodTriangle) {
+
+							hasTwoGoodTriangle = true;
+							goodRectangles.set(1, bounds);
+
+						} else {
+							hasOneGoodTriangle = true;
+							goodRectangles.set(0, bounds);
+						}
 						break;
 					}
-					if (Math.abs((bounds.getHeight() / bounds.getWidth()) - HEIGHT_WIDTH_RATIO) < RATIO_TOLERANCE) {
-						if (checkRightTriangle(p)) {
-							if (hasOneGoodTriangle) {
+				}
 
-								hasTwoGoodTriangle = true;
-								goodRectangles.set(1, bounds);
-
-							} else {
-								hasOneGoodTriangle = true;
-								goodRectangles.set(0, bounds);
-							}
-							break;
-						}
-					}
-				
 			}
 		}
 		return goodRectangles;
 	}
 
 	/**
-	 * Checks the distance between two rectangles, relative to their width. the ratio should be 33:8 or 4.125
+	 * Checks the distance between two rectangles, relative to their width. the
+	 * ratio should be 33:8 or 4.125
 	 * 
 	 * @param rect1
 	 *            first rectangle
 	 * @param rect2
 	 *            second rectangle
-	 * @return boolean true if the ratio is close enough to 33:8 (see <code>DISTANCE_TOLERANCE</code>)
+	 * @return boolean true if the ratio is close enough to 33:8 (see
+	 *         <code>DISTANCE_TOLERANCE</code>)
 	 */
 
 	private static boolean checkDistance(Rectangle rect1, Rectangle rect2) {
@@ -249,11 +250,13 @@ public class PegVisionUtils {
 	}
 
 	/**
-	 * checks whether the longest side (hypotenuse) has a slope of 2:5 this check is useful for sifting out weirdly oriented, but still 2:5 triangles
+	 * checks whether the longest side (hypotenuse) has a slope of 2:5 this
+	 * check is useful for sifting out weirdly oriented, but still 2:5 triangles
 	 * 
 	 * @param triangle
 	 *            the triangle to be checked
-	 * @return boolean true if hypotenuse slope is close enough to 2:5 (see <code>SLOPE_TOLERANCE</code>)
+	 * @return boolean true if hypotenuse slope is close enough to 2:5 (see
+	 *         <code>SLOPE_TOLERANCE</code>)
 	 */
 
 	private static boolean checkRightTriangle(Polygon triangle) {
@@ -315,7 +318,8 @@ public class PegVisionUtils {
 	 *            first good rectangle
 	 * @param goodRect2
 	 *            second good rectangle
-	 * @return true if all checks are passed (area check, alignment check, distance check, and two good rectangles were actually found)
+	 * @return true if all checks are passed (area check, alignment check,
+	 *         distance check, and two good rectangles were actually found)
 	 */
 
 	private static boolean validateEverything(Rectangle goodRect1, Rectangle goodRect2) {
@@ -363,15 +367,18 @@ public class PegVisionUtils {
 	}
 
 	/**
-	 * checks the 8 points given, and generates 8 new points after checking for error
+	 * checks the 8 points given, and generates 8 new points after checking for
+	 * error
 	 * 
 	 * @param points
 	 *            8 points, hopefully the 8 corners of the retroflective tape
-	 * @return ArrayList<Point> 8 new points generated after accounting for outliers- if good points cannot be found, returns <code>null</code>
+	 * @return ArrayList<Point> 8 new points generated after accounting for
+	 *         outliers- if good points cannot be found, returns
+	 *         <code>null</code>
 	 */
 
 	public static ArrayList<Point> generateNewPoints(ArrayList<Point> points) {
-		System.out.println( "OG POINTS  \n\n" + points + "\n\n");
+		System.out.println("OG POINTS  \n\n" + points + "\n\n");
 		ArrayList<Point[][]> triangles = generateTriangles(points);
 		ArrayList<Rectangle> goodRects = validateRectangles(triangles, points);
 		Rectangle goodRect1 = goodRects.get(0);
@@ -379,15 +386,29 @@ public class PegVisionUtils {
 
 		ArrayList<Point> newPoints = new ArrayList<Point>();
 		if (validateEverything(goodRect1, goodRect2)) {
-			newPoints.add(new Point(goodRect1.x, goodRect1.y));// left top corner
-			newPoints.add(new Point(goodRect1.x + goodRect1.width, goodRect1.y));// top right corner
-			newPoints.add(new Point(goodRect1.x, goodRect1.y + goodRect1.height));// bottom left corner
-			newPoints.add(new Point(goodRect1.x + goodRect1.width, goodRect1.y + goodRect1.height));// bottom right corner
+			newPoints.add(new Point(goodRect1.x, goodRect1.y));// left top
+																// corner
+			newPoints.add(new Point(goodRect1.x + goodRect1.width, goodRect1.y));// top
+																					// right
+																					// corner
+			newPoints.add(new Point(goodRect1.x, goodRect1.y + goodRect1.height));// bottom
+																					// left
+																					// corner
+			newPoints.add(new Point(goodRect1.x + goodRect1.width, goodRect1.y + goodRect1.height));// bottom
+																									// right
+																									// corner
 
-			newPoints.add(new Point(goodRect2.x, goodRect2.y));// left top corner
-			newPoints.add(new Point(goodRect2.x + goodRect2.width, goodRect2.y));// top right corner
-			newPoints.add(new Point(goodRect2.x, goodRect2.y + goodRect2.height));// bottom left corner
-			newPoints.add(new Point(goodRect2.x + goodRect2.width, goodRect2.y + goodRect2.height));// bottom right corner
+			newPoints.add(new Point(goodRect2.x, goodRect2.y));// left top
+																// corner
+			newPoints.add(new Point(goodRect2.x + goodRect2.width, goodRect2.y));// top
+																					// right
+																					// corner
+			newPoints.add(new Point(goodRect2.x, goodRect2.y + goodRect2.height));// bottom
+																					// left
+																					// corner
+			newPoints.add(new Point(goodRect2.x + goodRect2.width, goodRect2.y + goodRect2.height));// bottom
+																									// right
+																									// corner
 			return newPoints;
 
 		} else {
@@ -397,11 +418,14 @@ public class PegVisionUtils {
 	}
 
 	/**
-	 * finds the center (peg) of the 8 given points (corners of retroflective tape)
+	 * finds the center (peg) of the 8 given points (corners of retroflective
+	 * tape)
 	 * 
 	 * @param points
-	 *            8 points (these should be generated by <code>generateNewPoints</code>
-	 * @return Point the point of the peg/center. If the ArrayList of points is null, will return null
+	 *            8 points (these should be generated by
+	 *            <code>generateNewPoints</code>
+	 * @return Point the point of the peg/center. If the ArrayList of points is
+	 *         null, will return null
 	 */
 
 	public static Point findPeg(ArrayList<Point> points) {
@@ -432,5 +456,27 @@ public class PegVisionUtils {
 		PegY = (mid1Y + mid2Y) / 2;
 
 		return (new Point((int) PegX, (int) PegY));
+	}
+
+	/**
+	 * Finds the distance from the camera to the center of the peg
+	 * 
+	 * @param length
+	 *            is the length in inches of the target (one retro-reflective
+	 *            tape to another)
+	 * @param FOV
+	 *            is the field of view in degrees of the camera
+	 * @param pixels
+	 *            is the distance of between one retro-reflective tape to
+	 *            another in pixels
+	 * @param totalPixels
+	 *            is the total length of the image in pixels
+	 * 
+	 * @return The distance from the camera to the center of the peg in inches
+	 */
+	public static float calcDistance(float length, float FOV, float pixels, float totalPixels) {
+		float distance = 0;
+		distance = (float) (length / ((2 * Math.tan(FOV * pixels) / (2 * totalPixels))));
+		return distance;
 	}
 }
