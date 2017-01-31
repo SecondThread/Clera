@@ -15,7 +15,7 @@ public class PegVisionUtils {
 
 	public static final double RATIO_TOLERANCE = 3, DISTANCE_TOLERANCE = 3, SLOPE_TOLERANCE = 5,
 			ALIGNMENT_TOLERANCE = 50, AREA_TOLERANCE = 30000, HEIGHT_WIDTH_RATIO = 5, DISTANCE_WIDTH_RATIO = 4.125,
-			LENGTH_OF_DUMBO = 10.25, FOV_IN_DEGREES = 50, LENGTH_IN_PIXELS = 320;;
+			LENGTH_OF_DUMBO = 10.25, FOV_IN_DEGREES = 50, LENGTH_IN_PIXELS = 320;
 
 	// lengthofDumbo is 10.25 inches and pixels is the calculated length of
 	// dumbo in pixels
@@ -456,27 +456,5 @@ public class PegVisionUtils {
 		PegY = (mid1Y + mid2Y) / 2;
 
 		return (new Point((int) PegX, (int) PegY));
-	}
-
-	/**
-	 * Finds the distance from the camera to the center of the peg
-	 * 
-	 * @param length
-	 *            is the length in inches of the target (one retro-reflective
-	 *            tape to another)
-	 * @param FOV
-	 *            is the field of view in degrees of the camera
-	 * @param pixels
-	 *            is the distance of between one retro-reflective tape to
-	 *            another in pixels
-	 * @param totalPixels
-	 *            is the total length of the image in pixels
-	 * 
-	 * @return The distance from the camera to the center of the peg in inches
-	 */
-	public static float calcDistance(float length, float FOV, float pixels, float totalPixels) {
-		float distance = 0;
-		distance = (float) (length / ((2 * Math.tan(FOV * pixels) / (2 * totalPixels))));
-		return distance;
 	}
 }
