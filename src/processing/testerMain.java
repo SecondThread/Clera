@@ -4,7 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 import com.github.sarxos.webcam.Webcam;
 
@@ -14,7 +18,7 @@ public class testerMain {
 
 	private static Webcam webcam;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		BufferedImage image=null;
 		webcam=Webcam.getDefault();
 		webcam.setViewSize(new Dimension(320, 240));
@@ -24,9 +28,8 @@ public class testerMain {
 		ArrayList<Point> bestPoints=null;
 		System.out.println("start: "+System.currentTimeMillis());
 		for (int i=0; i<500; i++) {
-			image=getImageFromWebcam(webcam);
-			// image=ImageIO.read(new File("C:\\Users\\David\\Pictures\\Vision
-			// test\\PiTest.png"));
+			//image=getImageFromWebcam(webcam);
+			 image=ImageIO.read(new File("D:\\Code\\3.jpg"));
 			Color[][] asColors=new Color[image.getWidth()][image.getHeight()];
 
 			for (int x=0; x<asColors.length; x++) {
