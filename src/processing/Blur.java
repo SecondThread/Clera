@@ -102,12 +102,16 @@ public class Blur {
 					for (int cur = x + 1; cur <= x + size / 2; cur++) {
 						total += image[x][y];
 					}
+					blurredImage[x][y] = (float) total / size;
+					continue;
 				}
 				if (2 * (image[0].length - 1) < size) {
 					total += Math.ceil(size - 2 * (image[0].length - 1 - x) / 2) * image[image.length - 1][y];
 					for (int cur = x - size / 2; cur <= x; cur++) {
 						total += image[x][y];
 					}
+					blurredImage[x][y] = (float) total / size;
+					continue;
 				}
 				for (int cur = x - size / 2; cur <= x + size / 2; cur++) {
 					total += image[x][y];
@@ -117,21 +121,25 @@ public class Blur {
 		}
 
 		// Vertical Blurring
-		for (int x = 0; x < blurredImage[0].length; x++) {
-			for (int y = 0; y < blurredImage.length; y++) {
+		for (int x = 0; x < blurredImage.length; x++) {
+			for (int y = 0; y < blurredImage[0].length; y++) {
 				total = 0;
 				if (2 * y < size) {
-					total += Math.ceil((size - 2 * y) / 2) * blurredImage[0][x];
+					total += Math.ceil((size - 2 * y) / 2) * blurredImage[x][0];
 					for (int cur = y + 1; cur <= y + size / 2; cur++) {
 						total += blurredImage[x][y];
 					}
+					blurredImage[x][y] = (float) total / size;
+					continue;
 				}
 				if (2 * (blurredImage[0].length - 1) < size) {
 					total += Math.ceil(size - 2 * (blurredImage[0].length - 1 - y) / 2)
-							* blurredImage[blurredImage.length - 1][x];
+							* blurredImage[0][blurredImage.length - 1];
 					for (int cur = y - size / 2; cur <= y; cur++) {
 						total += blurredImage[x][y];
 					}
+					blurredImage[x][y] = (float) total / size;
+					continue;
 				}
 				for (int cur = y - size / 2; cur <= y + size / 2; cur++) {
 					total += blurredImage[x][y];
