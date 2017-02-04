@@ -23,6 +23,10 @@ public class PegVisionUtils {
 	// this was written by gerch not by billy
 	public static double calcDistance(ArrayList<Point> points) {
 
+		if(points == null)
+		{
+			return 0;
+		}
 		Point leftMost = new Point(Integer.MAX_VALUE, 0);
 		Point rightMost = new Point(0, 0);
 		for (Point p : points) {
