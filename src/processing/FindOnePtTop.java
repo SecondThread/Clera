@@ -1,15 +1,8 @@
 package processing;
 
-import java.awt.Color;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
-
-import robot.Window;
 
 /**
  * This class will find the top point of the HIGH GOAL reflection tape curve by
@@ -31,7 +24,7 @@ public class FindOnePtTop {
 		for (int y = 10; y < processedImage[0].length - 10; y++)
 			for (int x = 10; x < processedImage.length - 10; x++) {
 				if (bestTopPts.isEmpty()) {
-					// find top point
+
 					if (failed < 7 && processedImage[x][y] == 1) {
 						success++;
 						failed = 0;
@@ -80,12 +73,6 @@ public class FindOnePtTop {
 				}
 			}
 
-		Color[][] asColors = new Color[image.getWidth()][image.getHeight()];
-		for (int x = 0; x < asColors.length; x++) {
-			for (int y = 0; y < asColors[x].length; y++) {
-				asColors[x][y] = new Color(image.getRGB(x, y));
-			}
-		}
 		if (bestTopPts.size() > 0) {
 			return bestTopPts.get(0);
 		} else {
