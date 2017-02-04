@@ -34,7 +34,6 @@ public class PiClient {
 						table.putNumber("degreesToTurn", getDegreesToTurn(0));
 						table.putNumber("distanceToMove", distance);
 						table.putBoolean("processVision", false);
-						table.putNumber("distanceToPegInches", PegVisionUtils.calcDistance(PegVisionUtils.generateNewPoints(foundPoints)));
 					}
 				}
 			}
@@ -65,6 +64,7 @@ public class PiClient {
 
 		bestPoints=new ArrayList<Point>();
 		bestPoints=runThreads(luminance);
+		Window.displayPixels(luminance, "picture");
 		//null if points are wrong
 		if (bestPoints==null) {
 			if (runCounter>=3) {
@@ -112,6 +112,7 @@ public class PiClient {
 
 		//null if the points are wrong
 		toReturn=PegVisionUtils.generateNewPoints(toReturn);
+		System.out.println("!!!!!!!!!!!!!!generated new points: " + toReturn);
 
 		return toReturn;
 
