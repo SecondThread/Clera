@@ -9,6 +9,7 @@ import com.github.sarxos.webcam.Webcam;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.tables.ITable;
 import edu.wpi.first.wpilibj.tables.ITableListener;
+import processing.FindOnePtTop;
 import processing.ImageProcessor;
 import processing.ImageSearchingThread;
 import processing.PegVisionUtils;
@@ -19,6 +20,7 @@ public class PiClient {
 
 	private static Webcam webcam;
 	private static ArrayList<Point> foundPoints;
+	private static Point shooterPoint;
 	private static double distance;
 
 	public static void main(String[] a) {
@@ -34,7 +36,6 @@ public class PiClient {
 						table.putNumber("degreesToTurn", getDegreesToTurn(0));
 						table.putNumber("distanceToMove", distance);
 						table.putBoolean("processVision", false);
-						table.putNumber("distanceToPegInches", PegVisionUtils.calcDistance(PegVisionUtils.generateNewPoints(foundPoints)));
 					}
 				}
 			}
@@ -65,6 +66,7 @@ public class PiClient {
 
 		bestPoints=new ArrayList<Point>();
 		bestPoints=runThreads(luminance);
+		Window.displayPixels(luminance, "picture");
 		//null if points are wrong
 		if (bestPoints==null) {
 			if (runCounter>=3) {
@@ -80,6 +82,22 @@ public class PiClient {
 		//length of dumbo, 50, width of image, best points
 		distance=PegVisionUtils.calcDistance(bestPoints);
 		return TurnAngle.getTurnAngle(peg);
+	}
+	
+	public static float getShooterDegreesToTurn(int runCounter, BufferedImage shooterImage) {
+		System.out.println("start: " + System.currentTimeMillis());
+		Point shooter = FindOnePtTop.findTopPoint(shooterImage);
+		shooterPoint = shooter;
+		// null if points are wrong
+		if (shooter.equals(new Point(0, 0))) {
+			if (runCounter >= 3) {
+				return 0;
+			}
+			// try it again if we got things wrong
+			return getShooterDegreesToTurn(runCounter + 1, shooterImage);
+		}
+		System.out.println("done: " + System.currentTimeMillis());
+		return TurnAngle.getTurnAngle(shooter);
 	}
 
 	private static ArrayList<Point> runThreads(float[][] image) {
@@ -112,6 +130,7 @@ public class PiClient {
 
 		//null if the points are wrong
 		toReturn=PegVisionUtils.generateNewPoints(toReturn);
+		System.out.println("!!!!!!!!!!!!!!generated new points: " + toReturn);
 
 		return toReturn;
 

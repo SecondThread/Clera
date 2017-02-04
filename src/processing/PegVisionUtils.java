@@ -22,9 +22,10 @@ public class PegVisionUtils {
 	// lengthinPixels is the total width of the screen is pixels
 	// this was written by gerch not by billy
 	public static double calcDistance(ArrayList<Point> points) {
-
+		
 		if(points == null)
 		{
+			System.out.println("Passed null points!!!");
 			return 0;
 		}
 		Point leftMost = new Point(Integer.MAX_VALUE, 0);
@@ -382,6 +383,10 @@ public class PegVisionUtils {
 	 */
 
 	public static ArrayList<Point> generateNewPoints(ArrayList<Point> points) {
+		if(points == null) {
+			System.out.println("generatePoints was passed null ");
+			return null;
+		}
 		System.out.println("OG POINTS  \n\n" + points + "\n\n");
 		ArrayList<Point[][]> triangles = generateTriangles(points);
 		ArrayList<Rectangle> goodRects = validateRectangles(triangles, points);
