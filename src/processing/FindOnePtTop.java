@@ -12,6 +12,11 @@ import java.util.ArrayList;
  *
  */
 public class FindOnePtTop {
+	/**
+	 * return the top point
+	 * @param image: image that needs to be processed
+	 * @return Point Object which is the top point
+	 */
 	public static Point findTopPoint(BufferedImage image) {
 
 		GreenImageProcesser processer = new GreenImageProcesser(-.5f, 1.0f, -.5f, 0.5);
