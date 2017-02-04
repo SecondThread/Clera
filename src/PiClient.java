@@ -78,7 +78,7 @@ public class PiClient {
 		foundPoints = bestPoints;
 		Point peg=PegVisionUtils.findPeg(bestPoints);
 		//length of dumbo, 50, width of image, best points
-		distance=PegVisionUtils.distance(10.25, 50, 320, bestPoints);
+		distance=PegVisionUtils.calcDistance(bestPoints);
 		return TurnAngle.getTurnAngle(peg);
 	}
 
