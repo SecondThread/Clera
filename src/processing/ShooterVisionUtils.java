@@ -2,7 +2,13 @@ package processing;
 
 import java.awt.Point;
 
+/**
+* this class will find the brightest point on an image
+*
+**/
+
 public class ShooterVisionUtils {
+	
 	public static Point brightestPoint(float[][] image) {
 		Point max = new Point(0, 0);
 		float maxLuminance = image[0][0];
