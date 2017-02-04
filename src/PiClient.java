@@ -58,7 +58,7 @@ public class PiClient {
 				asColors[x][y]=new Color(image.getRGB(x, y));
 			}
 		}
-		luminance=ImageProcessor.luminance(asColors, -.2f, 1.0f, -.2f);
+		luminance=ImageProcessor.luminance(asColors, -.6f, 1.0f, -.2f);
 		ImageProcessor.normalize(luminance);
 		ImageProcessor.applyExponentialCurve(luminance, 3);
 
