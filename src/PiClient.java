@@ -19,6 +19,7 @@ public class PiClient {
 
 	private static Webcam webcam;
 	private static ArrayList<Point> foundPoints;
+	private static double distance;
 
 	public static void main(String[] a) {
 		init();
@@ -31,6 +32,7 @@ public class PiClient {
 				if (key.equals("processVision")) {
 					if (table.getBoolean(key, false)) {
 						table.putNumber("degreesToTurn", getDegreesToTurn(0));
+						table.putNumber("distanceToMove", distance);
 						table.putBoolean("processVision", false);
 						table.putNumber("distanceToPegInches", PegVisionUtils.calcDistance(PegVisionUtils.generateNewPoints(foundPoints)));
 					}
@@ -75,6 +77,8 @@ public class PiClient {
 		Window.saveImage(luminance, bestPoints, "result.png");
 		foundPoints = bestPoints;
 		Point peg=PegVisionUtils.findPeg(bestPoints);
+		//length of dumbo, 50, width of image, best points
+		distance=PegVisionUtils.distance(10.25, 50, 320, bestPoints);
 		return TurnAngle.getTurnAngle(peg);
 	}
 
