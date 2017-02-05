@@ -9,19 +9,6 @@ public class TurnAngle {
 	private static final double HEIGHT=240; // length of screen
 	private static final double ANGLE=50; // horizontal angle of the camera
 
-	private static Point getMidPoint(ArrayList<Point> bestPoints) {
-
-		double totalX=0;
-		double totalY=0;
-		for (Point p : bestPoints) {
-			totalX+=p.getX();
-			totalY+=p.getY();
-		}
-		Point midPt=new Point((int)(totalX/8.0), (int)(totalY/8.0));
-
-		return midPt;
-	}
-
 	/**
 	 * 
 	 * @param midPt

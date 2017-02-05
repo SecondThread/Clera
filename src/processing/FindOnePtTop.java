@@ -12,6 +12,11 @@ import java.util.ArrayList;
  *
  */
 public class FindOnePtTop {
+	/**
+	 * return the top point
+	 * @param image: image that needs to be processed
+	 * @return Point Object which is the top point
+	 */
 	public static Point findTopPoint(BufferedImage image) {
 
 		GreenImageProcesser processer = new GreenImageProcesser(-.5f, 1.0f, -.5f, 0.5);
@@ -21,38 +26,39 @@ public class FindOnePtTop {
 		int failed = 0;
 		int startPoint = 0;
 		int endPoint = 0;
-		for (int y = 10; y < processedImage[0].length - 10; y++)
-			for (int x = 10; x < processedImage.length - 10; x++) {
+		for (int y = 0; y < processedImage[0].length ; y++)
+			for (int x = 0; x < processedImage.length ; x++) {
 				if (bestTopPts.isEmpty()) {
 
-					if (failed < 7 && processedImage[x][y] == 1) {
+					if (failed < 4 && processedImage[x][y] == 1) {
 						success++;
 						failed = 0;
 						if (success == 1)
 							startPoint = x;
-					} else if (failed < 7) {
+					} else if (failed < 4) {
 						if (success != 0)
 							failed++;
-					} else if (success < 7) {
+					} else if (success < 4) {
 						success = 0;
 						failed = 0;
 						startPoint = 0;
 					} else {
 						success = 0;
 						failed = 0;
-						endPoint = x - 7;
+						endPoint = x - 4;
 					}
 					if (startPoint != 0 && endPoint != 0) {
 						int midPoint = (startPoint + endPoint) / 2;
 						int topCheck = 0;
 						int botCheck = 0;
 						if (midPoint != 0) {
-							for (int i = 1; i < 5; i++) {
+							for (int i = 1; i < 4; i++) {
 
+								if (y>3)
 								if (processedImage[midPoint][y - i] == 0) {
 									topCheck++;
 								}
-
+								if (y<processedImage[0].length-3)
 								if (processedImage[midPoint][y + i] == 1) {
 									botCheck++;
 								}

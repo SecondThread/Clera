@@ -16,9 +16,7 @@ public class GreenImageProcesser {
 	private float blueIndex;
 	private float greenIndex;
 	private double upperBound;
-	/**
-	 * Construction method
-	 */
+	
 	public GreenImageProcesser(){
 		redIndex =  -.45f;
 		greenIndex= 1.0f;
