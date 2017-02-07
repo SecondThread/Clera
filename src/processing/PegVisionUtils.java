@@ -15,7 +15,7 @@ public class PegVisionUtils {
 
 	public static final double RATIO_TOLERANCE = 3, DISTANCE_TOLERANCE = 3, SLOPE_TOLERANCE = 5,
 			ALIGNMENT_TOLERANCE = 50, AREA_TOLERANCE = 30000, HEIGHT_WIDTH_RATIO = 5, DISTANCE_WIDTH_RATIO = 4.125,
-			LENGTH_OF_DUMBO = 10.25, FOV_IN_DEGREES = 50, LENGTH_IN_PIXELS = 320, PIXEL_CORRECTION = 153 / 163;
+			LENGTH_OF_DUMBO = 10.25, FOV_IN_DEGREES = 50, LENGTH_IN_PIXELS = 320, PIXEL_CORRECTION = 153.0 / 163.0;
 
 	// lengthofDumbo is 10.25 inches and pixels is the calculated length of
 	// dumbo in pixels
