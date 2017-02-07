@@ -22,9 +22,7 @@ public class PegVisionUtils {
 	// lengthinPixels is the total width of the screen is pixels
 	// this was written by gerch not by billy
 	public static double calcDistance(ArrayList<Point> points) {
-		
-		if(points == null)
-		{
+		if (points == null) {
 			System.out.println("Passed null points!!!");
 			return 0;
 		}
@@ -39,8 +37,9 @@ public class PegVisionUtils {
 			}
 		}
 
-		double pixels = rightMost.getX() - leftMost.getX();
-		double distance = LENGTH_OF_DUMBO / (2 * Math.tan((FOV_IN_DEGREES * pixels) / (2 * LENGTH_IN_PIXELS)));
+		double pixels = Math.abs(rightMost.getX() - leftMost.getX());
+		double distance = LENGTH_OF_DUMBO
+				/ (2 * Math.tan(Math.toRadians((FOV_IN_DEGREES * pixels) / (2 * LENGTH_IN_PIXELS))));
 		return distance;
 	}
 
@@ -383,7 +382,7 @@ public class PegVisionUtils {
 	 */
 
 	public static ArrayList<Point> generateNewPoints(ArrayList<Point> points) {
-		if(points == null) {
+		if (points == null) {
 			System.out.println("generatePoints was passed null ");
 			return null;
 		}
