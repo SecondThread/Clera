@@ -15,16 +15,14 @@ public class PegVisionUtils {
 
 	public static final double RATIO_TOLERANCE = 3, DISTANCE_TOLERANCE = 3, SLOPE_TOLERANCE = 5,
 			ALIGNMENT_TOLERANCE = 50, AREA_TOLERANCE = 30000, HEIGHT_WIDTH_RATIO = 5, DISTANCE_WIDTH_RATIO = 4.125,
-			LENGTH_OF_DUMBO = 10.25, FOV_IN_DEGREES = 50, LENGTH_IN_PIXELS = 320;
+			LENGTH_OF_DUMBO = 10.25, FOV_IN_DEGREES = 50, LENGTH_IN_PIXELS = 320, PIXEL_CORRECTION = 153.0 / 163.0;
 
 	// lengthofDumbo is 10.25 inches and pixels is the calculated length of
 	// dumbo in pixels
 	// lengthinPixels is the total width of the screen is pixels
 	// this was written by gerch not by billy
 	public static double calcDistance(ArrayList<Point> points) {
-		
-		if(points == null)
-		{
+		if (points == null) {
 			System.out.println("Passed null points!!!");
 			return 0;
 		}
@@ -39,8 +37,9 @@ public class PegVisionUtils {
 			}
 		}
 
-		double pixels = rightMost.getX() - leftMost.getX();
-		double distance = LENGTH_OF_DUMBO / (2 * Math.tan((FOV_IN_DEGREES * pixels) / (2 * LENGTH_IN_PIXELS)));
+		double pixels = Math.abs(rightMost.getX() - leftMost.getX());
+		double distance = PIXEL_CORRECTION * (LENGTH_OF_DUMBO
+				/ (2 * Math.tan(Math.toRadians((FOV_IN_DEGREES * pixels) / (2 * LENGTH_IN_PIXELS)))));
 		return distance;
 	}
 
@@ -383,7 +382,7 @@ public class PegVisionUtils {
 	 */
 
 	public static ArrayList<Point> generateNewPoints(ArrayList<Point> points) {
-		if(points == null) {
+		if (points == null) {
 			System.out.println("generatePoints was passed null ");
 			return null;
 		}
