@@ -1,4 +1,10 @@
 /physics/
 /processing/
 /PiClient$1.class
+<<<<<<< HEAD
 /compression/
+=======
+/game/
+/robot/
+/templateMatching/
+>>>>>>> dev
