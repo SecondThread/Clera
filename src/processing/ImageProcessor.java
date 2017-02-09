@@ -134,7 +134,7 @@ public class ImageProcessor {
 			}
 			colors.append("|");
 		}
-		return String.valueOf(colors);
+		return colors.toString();
 	}
 
 	public static Color[][] convertToColorArray(String colors) {
@@ -148,12 +148,12 @@ public class ImageProcessor {
 		for (cur = 0; cur < colors.length() && (rows == 0 || columns == 0); cur++) {
 			char curChar = colors.charAt(cur);
 			if (curChar == 'R') {
-				rows = Integer.parseInt(String.valueOf(curString));
+				rows = Integer.parseInt(curString.toString());
 				curString = new StringBuilder("");
 				continue;
 			}
 			if (curChar == 'C') {
-				columns = Integer.parseInt(String.valueOf(curString));
+				columns = Integer.parseInt(curString.toString());
 				curString = new StringBuilder("");
 				continue;
 			}
@@ -165,7 +165,7 @@ public class ImageProcessor {
 		for (cur = cur; cur < colors.length(); cur++) {
 			char curChar = colors.charAt(cur);
 			if (curChar == '-') {
-				String[] curColor = String.valueOf(curString).split(",");
+				String[] curColor = curString.toString().split(",");
 				int red = Integer.parseInt(curColor[0]);
 				int green = Integer.parseInt(curColor[1]);
 				int blue = Integer.parseInt(curColor[2]);
