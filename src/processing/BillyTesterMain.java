@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 
@@ -27,16 +28,16 @@ public class BillyTesterMain {
 		long startTime = System.nanoTime();
 		Window.displayPixels(asColors, "Original");
 		long endTime1 = System.nanoTime();
-		System.out.println("Original Displayed: " + (endTime1 - startTime) / 1000000);
+		System.out.println("Original Displayed: " + TimeUnit.NANOSECONDS.toMillis(endTime1 - startTime));
 		String colors = ImageProcessor.convertToString(asColors);
 		long endTime2 = System.nanoTime();
-		System.out.println("Converted to String: " + (endTime2 - startTime) / 1000000);
+		System.out.println("Converted to String: " + TimeUnit.NANOSECONDS.toMillis(endTime2 - startTime));
 		Color[][] processedImage = ImageProcessor.convertToColorArray(colors);
 		long endTime3 = System.nanoTime();
-		System.out.println("Converted back to Color[][]: " + (endTime3 - startTime) / 1000000);
+		System.out.println("Converted back to Color[][]: " + TimeUnit.NANOSECONDS.toMillis(endTime3 - startTime));
 		Window.displayPixels(processedImage, "Processed");
 		long endTime4 = System.nanoTime();
-		System.out.println("Processed Displayed: " + (endTime4 - startTime) / 1000000);
+		System.out.println("Processed Displayed: " + TimeUnit.NANOSECONDS.toMillis(endTime4 - startTime));
 
 	}
 }
