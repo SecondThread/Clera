@@ -27,21 +27,17 @@ public class PiClient {
 		init();
 		NetworkTable.setClientMode();
 		NetworkTable.setIPAddress("roboRIO-2202-FRC.local");
-		NetworkTable table = NetworkTable.getTable("VisionTable");
-		table.addTableListener(new ITableListener() {
-			public void valueChanged(ITable source, String key, Object value, boolean isNew) {
-				System.out.println("Value changed, key: " + key);
-				if (key.equals("processVision")) {
-					if (table.getBoolean(key, false)) {
-						table.putNumber("degreesToTurn", getDegreesToTurn(0));
-						table.putNumber("distanceToMove", distance);
-						table.putBoolean("processVision", false);
-					}
-				}
+		NetworkTable table=NetworkTable.getTable("VisionTable");
+
+		while (true) {
+			if (table.getBoolean("processVision", false)) {
+				table.putNumber("degreesToTurn", getDegreesToTurn(0));
+				table.putNumber("distanceToMove", distance);
+				table.putBoolean("processVision", false);
 			}
-		});
+		}
 	}
-	
+
 	public static void init() {
 		webcam=Webcam.getDefault();
 		webcam.setViewSize(new Dimension(320, 240));
@@ -67,36 +63,36 @@ public class PiClient {
 		bestPoints=new ArrayList<Point>();
 		bestPoints=runThreads(luminance);
 		Window.displayPixels(luminance, "picture");
-		//null if points are wrong
+		// null if points are wrong
 		if (bestPoints==null) {
 			if (runCounter>=3) {
 				return 0;
 			}
-			//try it again if we got things wrong
+			// try it again if we got things wrong
 			return getDegreesToTurn(runCounter+1);
 		}
 		System.out.println("done: "+System.currentTimeMillis());
 		Window.saveImage(luminance, bestPoints, "result.png");
-		foundPoints = bestPoints;
+		foundPoints=bestPoints;
 		Point peg=PegVisionUtils.findPeg(bestPoints);
-		//length of dumbo, 50, width of image, best points
+		// length of dumbo, 50, width of image, best points
 		distance=PegVisionUtils.calcDistance(bestPoints);
 		return TurnAngle.getTurnAngle(peg);
 	}
-	
+
 	public static float getShooterDegreesToTurn(int runCounter, BufferedImage shooterImage) {
-		System.out.println("start: " + System.currentTimeMillis());
-		Point shooter = FindOnePtTop.findTopPoint(shooterImage);
-		shooterPoint = shooter;
+		System.out.println("start: "+System.currentTimeMillis());
+		Point shooter=FindOnePtTop.findTopPoint(shooterImage);
+		shooterPoint=shooter;
 		// null if points are wrong
 		if (shooter.equals(new Point(0, 0))) {
-			if (runCounter >= 3) {
+			if (runCounter>=3) {
 				return 0;
 			}
 			// try it again if we got things wrong
-			return getShooterDegreesToTurn(runCounter + 1, shooterImage);
+			return getShooterDegreesToTurn(runCounter+1, shooterImage);
 		}
-		System.out.println("done: " + System.currentTimeMillis());
+		System.out.println("done: "+System.currentTimeMillis());
 		return TurnAngle.getTurnAngle(shooter);
 	}
 
@@ -128,9 +124,9 @@ public class PiClient {
 		toReturn.addAll(bottomLeft.bestPoints);
 		toReturn.addAll(bottomRight.bestPoints);
 
-		//null if the points are wrong
+		// null if the points are wrong
 		toReturn=PegVisionUtils.generateNewPoints(toReturn);
-		System.out.println("!!!!!!!!!!!!!!generated new points: " + toReturn);
+		System.out.println("!!!!!!!!!!!!!!generated new points: "+toReturn);
 
 		return toReturn;
 
