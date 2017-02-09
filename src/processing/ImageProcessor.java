@@ -2,6 +2,7 @@ package processing;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class ImageProcessor {
@@ -116,36 +117,47 @@ public class ImageProcessor {
 	}
 
 	public static String convertToString(Color[][] image) {
-		String colors = "";
+		StringBuilder colors = new StringBuilder("");
+		colors.append(image.length);
+		colors.append("R");
+		colors.append(image[0].length);
+		colors.append("C");
 		for (int r = 0; r < image.length; r++) {
 			for (int c = 0; c < image[0].length; c++) {
 				Color cur = image[r][c];
-				colors += cur.getRed() + "," + cur.getGreen() + "," + cur.getBlue() + "-";
+				colors.append(cur.getRed());
+				colors.append(",");
+				colors.append(cur.getGreen());
+				colors.append(",");
+				colors.append(cur.getBlue());
+				colors.append("-");
 			}
-			colors += "|";
+			colors.append("|");
 		}
-		return image.length + "R" + image[0].length + "C" + colors;
+		return String.valueOf(colors);
 	}
 
 	public static Color[][] convertToColorArray(String colors) {
-		Color[][] image = null;
+		Color[][] image;
 		int rows = 0;
 		int columns = 0;
 		int curRow = 0;
 		int curColumn = 0;
 		int cur = 0;
-		String curString = "";
+		StringBuilder curString = new StringBuilder("");
 		for (cur = 0; cur < colors.length() && (rows == 0 || columns == 0); cur++) {
 			char curChar = colors.charAt(cur);
 			if (curChar == 'R') {
-				rows = Integer.parseInt(curString);
-				curString = "";
+				rows = Integer.parseInt(String.valueOf(curString));
+				curString = new StringBuilder("");
+				continue;
 			}
 			if (curChar == 'C') {
-				columns = Integer.parseInt(curString);
-				curString = "";
+				columns = Integer.parseInt(String.valueOf(curString));
+				curString = new StringBuilder("");
+				continue;
 			}
-			curString += curChar;
+			curString.append(curChar);
 		}
 
 		image = new Color[rows][columns];
@@ -153,23 +165,23 @@ public class ImageProcessor {
 		for (cur = cur; cur < colors.length(); cur++) {
 			char curChar = colors.charAt(cur);
 			if (curChar == '-') {
-				Scanner curColor = new Scanner(curString);
-				curColor.useDelimiter(",");
-				int red = curColor.nextInt();
-				int green = curColor.nextInt();
-				int blue = curColor.nextInt();
-				curColor.close();
+				String[] curColor = String.valueOf(curString).split(",");
+				int red = Integer.parseInt(curColor[0]);
+				int green = Integer.parseInt(curColor[1]);
+				int blue = Integer.parseInt(curColor[2]);
 				curRowValue[curColumn] = new Color(red, green, blue);
-				curString = "";
+				curString = new StringBuilder("");
 				curColumn++;
+				continue;
 			}
 			if (curChar == '|') {
-				image[curRow] = curRowValue;
+				image[curRow] = Arrays.copyOf(curRowValue, curRowValue.length);
 				curRow++;
 				curColumn = 0;
-				curString = "";
+				curString = new StringBuilder("");
+				continue;
 			}
-			curString += curChar;
+			curString.append(curChar);
 		}
 
 		return image;
