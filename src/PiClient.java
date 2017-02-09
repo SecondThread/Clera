@@ -36,6 +36,7 @@ public class PiClient {
 						table.putNumber("degreesToTurn", getDegreesToTurn(0));
 						table.putNumber("distanceToMove", distance);
 						table.putBoolean("processVision", false);
+						table.putNumber("servoToTurn", getTurnAngle());
 					}
 				}
 			}
@@ -138,6 +139,12 @@ public class PiClient {
 
 	private static BufferedImage getImageFromWebcam(Webcam webcam) {
 		return webcam.getImage();
+	}
+	
+	private static double getTurnAngle() {
+		BufferedImage image=getImageFromWebcam(webcam);
+		Point mid= FindOnePtTop.findTopPoint(image);
+		return TurnAngle.getTurnAngle(mid);
 	}
 
 	private static float[][] topLeftTemplate= {{0, 0, 0, 0, 0, 0,}, {0, 0, 0, 0, 0, 0,}, {0, 0, 0, 0, 0, 0,},
