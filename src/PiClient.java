@@ -133,7 +133,6 @@ public class PiClient {
 	}
 
 	private static BufferedImage getImageFromWebcam(Webcam webcam) {
-		webcam.
 		return webcam.getImage();
 	}
 	
