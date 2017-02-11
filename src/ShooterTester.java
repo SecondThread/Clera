@@ -15,14 +15,7 @@ public class ShooterTester {
 
 	public static void main(String[] args) throws IOException {
 		shooterWebcam = Webcam.getWebcams().get(1);
-		if(shooterWebcam == pegWebcam)
-		{
-			System.out.println("double equal true");
-		}
-		if(shooterWebcam.equals(pegWebcam))
-		{
-			System.out.println("dot equals true");
-		}
+		
 		System.out.println("Shooter webcam: " + shooterWebcam.getName());
 		shooterWebcam.setViewSize(new Dimension(320, 240));
 		shooterWebcam.open(true);
