@@ -1,7 +1,6 @@
 package processing;
 
 import java.awt.Point;
-import java.util.ArrayList;
 
 public class TurnAngle {
 
