@@ -18,6 +18,7 @@ public class HighGoal {
 	private static Webcam webcam;
 	private static Point shooterPoint;
 	private static Color[][] image;
+	
 	public static void main(String[] a) {
 		init();
 		NetworkTable.setClientMode();
@@ -32,10 +33,9 @@ public class HighGoal {
 				System.out.println("Processing...");
 				table.putNumber("degreesToSetHighGoal", getShooterDegreesToTurn(0,getImageFromWebcam(webcam)));
 			}
-			else {
-				System.out.println("Getting image...");
-				getImage();
-			}
+			
+			System.out.println("Getting image...");
+			getImage();
 			if (table.getBoolean("NeedPictureHighGoal", false)) {
 				System.out.println("Sending picture");
 				image=ImageProcessor.scaleImage(image, 133);
