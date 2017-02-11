@@ -6,8 +6,6 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.swing.plaf.synth.SynthSeparatorUI;
-
 public class PegVisionUtils {
 
 	// All of the tolerances used, can and should be changed after more testing

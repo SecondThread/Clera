@@ -1,7 +1,3 @@
-/game/
-/images/
-/physics/
-/processing/
-/robot/
-/templateMatching/
-/PiClient$1.class
+/PegTester.class
+/RusnakTester.class
+/ShooterTester.class

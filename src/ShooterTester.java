@@ -1,12 +1,13 @@
-import com.github.sarxos.webcam.Webcam;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import robot.*;
+import com.github.sarxos.webcam.Webcam;
+
 import robot.Window;
 
 public class ShooterTester {
