@@ -2,6 +2,9 @@ package processing;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -67,15 +70,39 @@ public class ImageProcessor {
 	}
 
 	public static Color[][] scaleImage(Color[][] oldImage, int newWidth) {
-		int newHeight = newWidth * oldImage[0].length / oldImage.length;
-		Color[][] newImage = new Color[newWidth][newHeight];
-		for (int x = 0; x < newImage.length; x++) {
-			for (int y = 0; y < newImage[x].length; y++) {
-				newImage[x][y] = oldImage[(int) ((0.0 + x) / newWidth * oldImage.length)][(int) ((0.0 + y) / newHeight
-						* oldImage[0].length)];
+		// int newHeight = newWidth * oldImage[0].length / oldImage.length;
+		// Color[][] newImage = new Color[newWidth][newHeight];
+		// for (int x = 0; x < newImage.length; x++) {
+		// for (int y = 0; y < newImage[x].length; y++) {
+		// newImage[x][y] = oldImage[(int) ((0.0 + x) / newWidth *
+		// oldImage.length)][(int) ((0.0 + y) / newHeight
+		// * oldImage[0].length)];
+		// }
+		// }
+		// return newImage;
+
+		BufferedImage old = new BufferedImage(oldImage.length, oldImage[0].length, BufferedImage.TYPE_INT_RGB);
+
+		// Set each pixel of the BufferedImage to the color from the Color[][].
+		for (int x = 0; x < oldImage.length; x++) {
+			for (int y = 0; y < oldImage[x].length; y++) {
+				old.setRGB(x, y, oldImage[x][y].getRGB());
 			}
 		}
-		return newImage;
+		int newHeight = newWidth * oldImage[0].length / oldImage.length;
+		BufferedImage scaled = new BufferedImage(old.getWidth(), newHeight, BufferedImage.TYPE_INT_RGB);
+		AffineTransform at = new AffineTransform();
+		at.scale(newWidth / (double) old.getWidth(), newHeight / (double) old.getHeight());
+		AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+		scaled = scaleOp.filter(old, scaled);
+
+		Color[][] result = new Color[newWidth][newHeight];
+		for (int x = 0; x < newWidth; x++) {
+			for (int y = 0; y < newHeight; y++) {
+				result[x][y] = new Color(scaled.getRGB(x, y));
+			}
+		}
+		return result;
 	}
 
 	public static void normalize(float[][] image) {
