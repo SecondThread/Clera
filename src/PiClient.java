@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import com.github.sarxos.webcam.Webcam;
 
+import compression.ConvertToString;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.tables.ITable;
 import edu.wpi.first.wpilibj.tables.ITableListener;
@@ -21,6 +22,7 @@ public class PiClient {
 	private static Webcam webcam;
 	private static ArrayList<Point> foundPoints;
 	private static Point shooterPoint;
+	private static Color[][] image;
 	private static double distance;
 
 	public static void main(String[] a) {
@@ -30,10 +32,23 @@ public class PiClient {
 		NetworkTable table=NetworkTable.getTable("VisionTable");
 
 		while (true) {
+			//TODO, check the whether we should process after we have taken the image
+			System.out.println("\n----------------------\nSeeing if we need to process");
 			if (table.getBoolean("processVision", false)) {
+				System.out.println("Processing...");
 				table.putNumber("degreesToTurn", getDegreesToTurn(0));
 				table.putNumber("distanceToMove", distance);
 				table.putBoolean("processVision", false);
+			}
+			else {
+				System.out.println("Getting image...");
+				getImage();
+			}
+			if (table.getBoolean("NeedPicture", false)) {
+				System.out.println("Sending picture");
+				image=ImageProcessor.scaleImage(image, 133);
+				table.putString("Picture", ConvertToString.convertToString(image));
+				table.putBoolean("NeedPicture", false);
 			}
 		}
 	}
@@ -43,7 +58,19 @@ public class PiClient {
 		webcam.setViewSize(new Dimension(320, 240));
 		webcam.open();
 	}
+	
+	public static void getImage() {
+		BufferedImage image=getImageFromWebcam(webcam);
+		Color[][] asColors=new Color[image.getWidth()][image.getHeight()];
 
+		for (int x=0; x<asColors.length; x++) {
+			for (int y=0; y<asColors[x].length; y++) {
+				asColors[x][y]=new Color(image.getRGB(x, y));
+			}
+		}
+		PiClient.image=asColors;
+	}
+	
 	public static float getDegreesToTurn(int runCounter) {
 		float[][] luminance=null;
 		ArrayList<Point> bestPoints=null;
@@ -56,6 +83,9 @@ public class PiClient {
 				asColors[x][y]=new Color(image.getRGB(x, y));
 			}
 		}
+		
+		PiClient.image=asColors;
+		
 		luminance=ImageProcessor.luminance(asColors, -.6f, 1.0f, -.2f);
 		ImageProcessor.normalize(luminance);
 		ImageProcessor.applyExponentialCurve(luminance, 3);
@@ -133,7 +163,6 @@ public class PiClient {
 	}
 
 	private static BufferedImage getImageFromWebcam(Webcam webcam) {
-		webcam.
 		return webcam.getImage();
 	}
 	
