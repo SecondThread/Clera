@@ -1,5 +1,6 @@
 package highGoal;
 
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -29,9 +30,9 @@ public class HighGoal {
 			//TODO, check the whether we should process after we have taken the image
 			System.out.println("\n----------------------\nSeeing if we need to process");
 			if (table.getBoolean("processVisionHighGoal", false)) {
-				
 				System.out.println("Processing...");
 				table.putNumber("degreesToSetHighGoal", getShooterDegreesToTurn(0,getImageFromWebcam(webcam)));
+				table.putBoolean("processVisionHighGoal", false);
 			}
 			
 			System.out.println("Getting image...");
