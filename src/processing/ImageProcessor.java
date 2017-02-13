@@ -6,7 +6,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
-import java.util.Scanner;
 
 public class ImageProcessor {
 
@@ -146,74 +145,4 @@ public class ImageProcessor {
 		return luminance;
 	}
 
-	public static String convertToString(Color[][] image) {
-		StringBuilder colors=new StringBuilder("");
-		colors.append(image.length);
-		colors.append("R");
-		colors.append(image[0].length);
-		colors.append("C");
-		for (int r=0; r<image.length; r++) {
-			for (int c=0; c<image[0].length; c++) {
-				Color cur=image[r][c];
-				colors.append(cur.getRed());
-				colors.append(",");
-				colors.append(cur.getGreen());
-				colors.append(",");
-				colors.append(cur.getBlue());
-				colors.append("-");
-			}
-			colors.append("|");
-		}
-		return colors.toString();
-	}
-
-	public static Color[][] convertToColorArray(String colors) {
-		Color[][] image;
-		int rows=0;
-		int columns=0;
-		int curRow=0;
-		int curColumn=0;
-		int cur=0;
-		StringBuilder curString=new StringBuilder("");
-		for (cur=0; cur<colors.length()&&(rows==0||columns==0); cur++) {
-			char curChar=colors.charAt(cur);
-			if (curChar=='R') {
-				rows=Integer.parseInt(curString.toString());
-				curString=new StringBuilder("");
-				continue;
-			}
-			if (curChar=='C') {
-				columns=Integer.parseInt(curString.toString());
-				curString=new StringBuilder("");
-				continue;
-			}
-			curString.append(curChar);
-		}
-
-		image=new Color[rows][columns];
-		Color[] curRowValue=new Color[columns];
-		for (cur=cur; cur<colors.length(); cur++) {
-			char curChar=colors.charAt(cur);
-			if (curChar=='-') {
-				String[] curColor=curString.toString().split(",");
-				int red=Integer.parseInt(curColor[0]);
-				int green=Integer.parseInt(curColor[1]);
-				int blue=Integer.parseInt(curColor[2]);
-				curRowValue[curColumn]=new Color(red, green, blue);
-				curString=new StringBuilder("");
-				curColumn++;
-				continue;
-			}
-			if (curChar=='|') {
-				image[curRow]=Arrays.copyOf(curRowValue, curRowValue.length);
-				curRow++;
-				curColumn=0;
-				curString=new StringBuilder("");
-				continue;
-			}
-			curString.append(curChar);
-		}
-
-		return image;
-	}
 }

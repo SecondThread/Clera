@@ -42,7 +42,7 @@ public class PiClient {
 			}
 			else {
 				System.out.println("Getting image...");
-				getImage();
+				getImage(pegWebcam);
 			}
 			if (table.getBoolean("NeedPicture", false)) {
 				System.out.println("Sending picture");
@@ -66,7 +66,7 @@ public class PiClient {
 
 	}
 	
-	public static void getImage() {
+	public static void getImage(Webcam webcam) {
 		BufferedImage image=getImageFromWebcam(webcam);
 		Color[][] asColors=new Color[image.getWidth()][image.getHeight()];
 
