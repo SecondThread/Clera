@@ -12,7 +12,7 @@ import robot.Window;
 
 public class ShooterTester {
 
-	private static Webcam shooterWebcam, pegWebcam;
+	private static Webcam shooterWebcam;
 
 	public static void main(String[] args) throws IOException {
 		shooterWebcam = Webcam.getWebcams().get(1);

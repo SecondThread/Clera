@@ -1,3 +1,4 @@
+package mainClasses;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -8,8 +9,6 @@ import com.github.sarxos.webcam.Webcam;
 
 import compression.ConvertToString;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
-import edu.wpi.first.wpilibj.tables.ITable;
-import edu.wpi.first.wpilibj.tables.ITableListener;
 import processing.FindOnePtTop;
 import processing.ImageProcessor;
 import processing.ImageSearchingThread;
@@ -19,9 +18,7 @@ import robot.Window;
 
 public class PiClient {
 
-	private static Webcam pegWebcam, shooterWebcam;
-	private static ArrayList<Point> foundPoints;
-	private static Point shooterPoint;
+	private static Webcam pegWebcam;
 	private static Color[][] image;
 	private static double distance;
 
@@ -39,12 +36,14 @@ public class PiClient {
 				table.putNumber("degreesToTurn", getDegreesToTurn(0));
 				table.putNumber("distanceToMove", distance);
 				table.putBoolean("processVision", false);
+				//getDegreesToTurn will automatically set the image variable
 			}
 			else {
 				System.out.println("Getting image...");
 				getImage(pegWebcam);
 			}
 			if (table.getBoolean("NeedPicture", false)) {
+				//send the picture to the drivers station if they want it
 				System.out.println("Sending picture");
 				image=ImageProcessor.scaleImage(image, 133);
 				table.putString("Picture", ConvertToString.convertToString(image));
@@ -58,11 +57,6 @@ public class PiClient {
 		System.out.println("Peg webcam: " + pegWebcam.getName());
 		pegWebcam.setViewSize(new Dimension(320, 240));
 		pegWebcam.open();
-
-		shooterWebcam = Webcam.getWebcams().get(1);
-		System.out.println("Shooter webcam: " + shooterWebcam.getName());
-		shooterWebcam.setViewSize(new Dimension(320, 240));
-		shooterWebcam.open();
 
 	}
 	
@@ -110,9 +104,8 @@ public class PiClient {
 		}
 		System.out.println("done: " + System.currentTimeMillis());
 		Window.saveImage(luminance, bestPoints, "result.png");
-		foundPoints=bestPoints;
+
 		Point peg=PegVisionUtils.findPeg(bestPoints);
-		// length of dumbo, 50, width of image, best points
 		distance=PegVisionUtils.calcDistance(bestPoints);
 		return TurnAngle.getTurnAngle(peg);
 	}
@@ -120,7 +113,6 @@ public class PiClient {
 	public static float getShooterDegreesToTurn(int runCounter, BufferedImage shooterImage) {
 		System.out.println("start: "+System.currentTimeMillis());
 		Point shooter=FindOnePtTop.findTopPoint(shooterImage);
-		shooterPoint=shooter;
 		// null if points are wrong
 		if (shooter.equals(new Point(0, 0))) {
 			if (runCounter>=3) {

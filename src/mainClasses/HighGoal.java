@@ -1,4 +1,4 @@
-package highGoal;
+package mainClasses;
 
 
 import java.awt.Color;

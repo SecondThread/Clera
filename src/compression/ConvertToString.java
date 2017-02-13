@@ -12,27 +12,6 @@ import robot.Window;
 
 public class ConvertToString {
 	
-	public static void main(String[] args) {
-		try {
-			BufferedImage image=ImageIO.read(new File("face.png"));
-			Color[][] asColors=new Color[image.getWidth()][image.getHeight()];
-
-			for (int x=0; x<asColors.length; x++) {
-				for (int y=0; y<asColors[x].length; y++) {
-					asColors[x][y]=new Color(image.getRGB(x, y));
-				}
-			}
-			long start=System.currentTimeMillis();
-			String asString=convertToString(asColors);
-			asColors=convertBack(asString);
-			long end=System.currentTimeMillis();
-			System.out.println(end-start);
-			Window.displayPixels(asColors, "test");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
 	public static String convertToString(Color[][] image) {
 		StringBuilder toReturn=new StringBuilder("");
 		toReturn.append(image.length+" "+image[0].length+" ");
@@ -69,6 +48,7 @@ public class ConvertToString {
 		}
 		return toReturn;
 	}
+
 }
 
 /*
