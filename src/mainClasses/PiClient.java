@@ -15,12 +15,18 @@ import processing.ImageSearchingThread;
 import processing.PegVisionUtils;
 import processing.TurnAngle;
 import robot.Window;
+import com.github.sarxos.webcam.ds.v4l4j.V4l4jDriver;
+
 
 public class PiClient {
 
 	private static Webcam pegWebcam;
 	private static Color[][] image;
 	private static double distance;
+	
+	static {
+		Webcam.setDriver(new V4l4jDriver());
+	}
 
 	public static void main(String[] a) {
 		init();
@@ -57,7 +63,6 @@ public class PiClient {
 		System.out.println("Peg webcam: " + pegWebcam.getName());
 		pegWebcam.setViewSize(new Dimension(320, 240));
 		pegWebcam.open();
-
 	}
 	
 	public static void getImage(Webcam webcam) {

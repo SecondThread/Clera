@@ -7,6 +7,7 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.ds.v4l4j.V4l4jDriver;
 
 import compression.ConvertToString;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
@@ -14,11 +15,16 @@ import processing.FindOnePtTop;
 import processing.ImageProcessor;
 import processing.TurnAngle;
 
+
 public class HighGoal {
 
 	private static Webcam webcam;
 	private static Point shooterPoint;
 	private static Color[][] image;
+	
+	static {
+		Webcam.setDriver(new V4l4jDriver());
+	}
 	
 	public static void main(String[] a) {
 		init();
@@ -47,7 +53,7 @@ public class HighGoal {
 	}
 
 	public static void init() {
-		webcam=Webcam.getDefault();
+		webcam=Webcam.getWebcams().get(1);
 		webcam.setViewSize(new Dimension(320, 240));
 		webcam.open();
 	}
