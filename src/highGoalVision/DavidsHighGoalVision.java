@@ -8,8 +8,13 @@ import processing.ImageProcessor;
 public class DavidsHighGoalVision {
 	
 	private static final int MIN_PIXELS_IN_HIGHEST_ROW=5;
-	private static Color[][] toSend;
-
+	private static final double HORIZONTAL_FOV=50, HEIGHT_OF_CAMERA_INCHES=10, HEIGHT_OF_TOP_STRIP_INCHES=70, ANGLE_OF_CAMERA_FROM_HORIZONTAL=20;
+	
+	private Color[][] toSend;
+	private double degreesToTurn, distanceFromTarget;
+	private boolean visionSucceeded;
+	
+	
 	public void process(BufferedImage fromWebcam) {
 		Color[][] colors=new Color[fromWebcam.getWidth()][fromWebcam.getHeight()];
 		for (int x=0; x<colors.length; x++) {
@@ -23,6 +28,7 @@ public class DavidsHighGoalVision {
 		
 		
 		double finalX=0, finalY=0;
+		visionSucceeded=false;
 		for (int y=0; y<brightPixels[0].length; y++) {
 			int count=countTrueValuesInArray(brightPixels, y);
 			if (count>=MIN_PIXELS_IN_HIGHEST_ROW) {
@@ -33,12 +39,14 @@ public class DavidsHighGoalVision {
 					}
 				}
 				finalX/=count;
+				visionSucceeded=true;
 				break;
 			}
 		}
 		
 		markPixel((int)(finalX+0.5), (int)(finalY+0.5), colors);
 		toSend=colors;
+		calculateValues(finalX, finalY, brightPixels.length, brightPixels[0].length);
 	}
 	
 	private int countTrueValuesInArray(boolean[][] array, int y) {
@@ -59,6 +67,32 @@ public class DavidsHighGoalVision {
 				}
 			}
 		}
+	}
+	
+	private void calculateValues(double xOnScreen, double yOnScreen, int screenWidth, int screenHeight) {
+		degreesToTurn=(xOnScreen/screenWidth)*HORIZONTAL_FOV-HORIZONTAL_FOV/2;
+		
+		double verticleFOV=HORIZONTAL_FOV*screenHeight/screenWidth;
+		double heightOfStripAboveCamera=HEIGHT_OF_TOP_STRIP_INCHES-HEIGHT_OF_CAMERA_INCHES;
+		double angleFromTopOfScreen=yOnScreen/screenHeight*verticleFOV;
+		double angleToHighGoal=verticleFOV/2-angleFromTopOfScreen+ANGLE_OF_CAMERA_FROM_HORIZONTAL;
+		distanceFromTarget=heightOfStripAboveCamera/Math.tan(angleToHighGoal);		
+	}
+	
+	public double getDegreesToTurn() {
+		return degreesToTurn;
+	}
+	
+	public double getDistanceFromTarget() {
+		return distanceFromTarget;
+	}
+	
+	public Color[][] getImage() {
+		return toSend;
+	}
+	
+	public boolean getVisionSucceeded() {
+		return visionSucceeded;
 	}
 	
 }
