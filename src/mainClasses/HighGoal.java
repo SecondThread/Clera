@@ -11,6 +11,7 @@ import com.github.sarxos.webcam.ds.v4l4j.V4l4jDriver;
 
 import compression.ConvertToString;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import highGoalVision.DavidsHighGoalVision;
 import processing.FindOnePtTop;
 import processing.ImageProcessor;
 import processing.TurnAngle;
@@ -36,18 +37,20 @@ public class HighGoal {
 			//TODO, check the whether we should process after we have taken the image
 			System.out.println("\n----------------------\nSeeing if we need to process");
 			if (table.getBoolean("processVisionHighGoal", false)) {
+				DavidsHighGoalVision vision=new DavidsHighGoalVision();
+				
 				System.out.println("Processing...");
-				table.putNumber("degreesToSetHighGoal", getShooterDegreesToTurn(0,getImageFromWebcam(webcam)));
+				vision.process(getImageFromWebcam(webcam));
+				table.putNumber("degreesToSetHighGoal", vision.getDegreesToTurn());
+				table.putNumber("distanceFromHighGoal", vision.getDistanceFromTarget());
 				table.putBoolean("processVisionHighGoal", false);
-			}
-			
-			System.out.println("Getting image...");
-			getImage();
-			if (table.getBoolean("NeedPictureHighGoal", false)) {
-				System.out.println("Sending picture");
-				image=ImageProcessor.scaleImage(image, 133);
-				table.putString("Picture", ConvertToString.convertToString(image));
-				table.putBoolean("NeedPictureHighGoal", false);
+				
+				if (table.getBoolean("NeedPictureHighGoal", false)) {
+					System.out.println("Sending picture");
+					image=ImageProcessor.scaleImage(image, 133);
+					table.putString("PictureHighGoal", ConvertToString.convertToString(image));
+					table.putBoolean("NeedPictureHighGoal", false);
+				}
 			}
 		}
 	}
