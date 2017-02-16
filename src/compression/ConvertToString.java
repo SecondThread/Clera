@@ -16,23 +16,13 @@ public class ConvertToString {
 		StringBuilder toReturn = new StringBuilder("");
 		toReturn.append(image.length + " " + image[0].length + " ");
 		for (int x = 0; x < image.length; x++) {
-			for (int y = 0; y <= image[x].length; y = y + 2) {
-				if (y < image[x].length - 1) {
+			for (int y = 0; y < image[x].length; y = y + 2) {
 					char redGreen = (char) ((image[x][y].getRed() << 8) + image[x][y].getGreen());
 					char blueRed = (char) ((image[x][y].getBlue() << 8) + image[x][y + 1].getRed());
 					char greenBlue = (char) ((image[x][y + 1].getGreen() << 8) + image[x][y + 1].getBlue());
 					toReturn.append(redGreen);
 					toReturn.append(blueRed);
 					toReturn.append(greenBlue);
-				} else {
-					char red = (char) (image[x][y].getRed());
-					char green = (char) (image[x][y].getGreen());
-					char blue = (char) (image[x][y].getBlue());
-					toReturn.append(red);
-					toReturn.append(green);
-					toReturn.append(blue);
-
-				}
 			}
 		}
 		return toReturn.toString();
@@ -51,17 +41,11 @@ public class ConvertToString {
 		int index = 0;
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y = y + 2) {
-				if (y < height - 1) {
-					toReturn[x][y] = new Color((imageString.charAt(index) & 65280) >> 8,
-							imageString.charAt(index) & 255, (imageString.charAt(index + 1) & 65280) >> 8);
+					toReturn[x][y] = new Color((imageString.charAt(index) & 65280) >> 8, imageString.charAt(index) & 255,
+							(imageString.charAt(index + 1) & 65280) >> 8);
 					toReturn[x][y + 1] = new Color(imageString.charAt(index + 1) & 255,
 							(imageString.charAt(index + 2) & 65280) >> 8, imageString.charAt(index + 2) & 255);
 					index += 3;
-				} else {
-					toReturn[x][y] = new Color(imageString.charAt(index), imageString.charAt(index + 1),
-							imageString.charAt(index + 2));
-					index += 3;
-				}
 			}
 		}
 		return toReturn;
