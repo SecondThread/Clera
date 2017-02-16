@@ -18,7 +18,7 @@ import processing.ImageProcessor;
 public class DriverStationClient {
 
 	private static JFrame frame;
-	private static JPanel mainPanel;
+	private static JPanel mainPanel, outerPanel;
 	private static JButton visionToggle = new JButton();
 //	private static JLabel visionStatus = new JLabel();
 	private static boolean showHighGoalVision = false;
@@ -28,6 +28,7 @@ public class DriverStationClient {
 		NetworkTable.setIPAddress("roboRIO-2202-FRC.local");
 		NetworkTable table = NetworkTable.getTable("VisionTable");
 		table.putBoolean("NeedPicture", true);
+		table.putBoolean("NeedPictureHighGoal", true);
 
 		visionToggle.setActionCommand("toggle");
 		visionToggle.setText("Toggle Vision Mode");
@@ -35,9 +36,11 @@ public class DriverStationClient {
 
 		frame = new JFrame();
 		mainPanel = new JPanel();
-		frame.add(mainPanel);
+		outerPanel=new JPanel();
+		frame.add(outerPanel);
+		outerPanel.add(mainPanel);
 		mainPanel.setPreferredSize(new Dimension(640, 480));
-		mainPanel.add(visionToggle);
+		outerPanel.add(visionToggle);
 //		mainPanel.add(visionStatus);
 		frame.pack();
 		frame.setLocationRelativeTo(null);

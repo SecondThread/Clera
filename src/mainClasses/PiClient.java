@@ -60,6 +60,8 @@ public class PiClient {
 
 	public static void init() {
 		pegWebcam = Webcam.getWebcams().get(0);
+		if (pegWebcam.isOpen())
+			pegWebcam.close();
 		System.out.println("Peg webcam: " + pegWebcam.getName());
 		pegWebcam.setViewSize(new Dimension(320, 240));
 		pegWebcam.open();

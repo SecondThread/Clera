@@ -33,10 +33,11 @@ public class HighGoal {
 		NetworkTable.setIPAddress("roboRIO-2202-FRC.local");
 		NetworkTable table=NetworkTable.getTable("VisionTable");
 
+		System.out.println("Entering loop...");
 		while (true) {
 			//TODO, check the whether we should process after we have taken the image
-			System.out.println("\n----------------------\nSeeing if we need to process");
 			if (table.getBoolean("processVisionHighGoal", false)) {
+				System.out.println("Processing");
 				DavidsHighGoalVision vision=new DavidsHighGoalVision();
 				
 				System.out.println("Processing...");
@@ -47,9 +48,13 @@ public class HighGoal {
 				
 				if (table.getBoolean("NeedPictureHighGoal", false)) {
 					System.out.println("Sending picture");
-					image=ImageProcessor.scaleImage(image, 133);
+					image=vision.getImage();
+					image=ImageProcessor.scaleImage(image, 134);
 					table.putString("PictureHighGoal", ConvertToString.convertToString(image));
 					table.putBoolean("NeedPictureHighGoal", false);
+				}
+				else {
+					System.out.println("Not sending picture");
 				}
 			}
 		}
@@ -57,6 +62,8 @@ public class HighGoal {
 
 	public static void init() {
 		webcam=Webcam.getWebcams().get(1);
+		if (webcam.isOpen())
+			webcam.close();
 		webcam.setViewSize(new Dimension(320, 240));
 		webcam.open();
 	}

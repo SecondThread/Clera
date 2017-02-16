@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 
 import processing.ImageProcessor;
+import robot.Window;
 
 public class DavidsHighGoalVision {
 	
@@ -25,6 +26,7 @@ public class DavidsHighGoalVision {
 		}
 		
 		float[][] asLuminance=ImageProcessor.luminance(colors, -0.6f, 1, -0.6f);
+		ImageProcessor.normalize(asLuminance);
 		boolean[][] brightPixels=ImageProcessor.applyCutoff(0.6f, true, asLuminance);
 		
 		
@@ -46,7 +48,11 @@ public class DavidsHighGoalVision {
 		}
 		
 		markPixel((int)(finalX+0.5), (int)(finalY+0.5), colors);
-		toSend=colors;
+		toSend=colors;//fromBooleans(brightPixels);
+		
+		Window.displayPixels(colors, "name");
+		Window.displayPixels(asLuminance, "luminance");
+		Window.displayPixels(brightPixels, "brightPixels");
 		calculateValues(finalX, finalY, brightPixels.length, brightPixels[0].length);
 	}
 	
@@ -96,4 +102,14 @@ public class DavidsHighGoalVision {
 		return visionSucceeded;
 	}
 	
+	
+	public Color[][] fromBooleans(boolean[][] old) {
+		Color[][] toReturn=new Color[old.length][old[0].length];
+		for (int x=0; x<toReturn.length; x++) {
+			for (int y=0; y<toReturn[x].length; y++) {
+				toReturn[x][y]=old[x][y]?Color.green:Color.black;
+			}
+		}
+		return toReturn;
+	}
 }
