@@ -57,6 +57,7 @@ public class HighGoal {
 					System.out.println("Not sending picture");
 				}
 			}
+			webcam.getImage();
 		}
 	}
 

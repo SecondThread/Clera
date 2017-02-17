@@ -33,7 +33,7 @@ public class DriverStationClient {
 		visionToggle.setActionCommand("toggle");
 		visionToggle.setText("Toggle Vision Mode");
 		
-
+		
 		frame = new JFrame();
 		mainPanel = new JPanel();
 		outerPanel=new JPanel();
@@ -72,7 +72,7 @@ public class DriverStationClient {
 							image.setRGB(x, y, imageAsColors[x][y].getRGB());
 						}
 					}
-					System.out.println("Displaying picture");
+					System.out.println("Displaying Low picture");
 					mainPanel.getGraphics().drawImage(image, 0, 0, null);
 				}
 			} else {
@@ -91,7 +91,7 @@ public class DriverStationClient {
 							image.setRGB(x, y, imageAsColors[x][y].getRGB());
 						}
 					}
-					System.out.println("Displaying picture");
+					System.out.println("Displaying High picture");
 					mainPanel.getGraphics().drawImage(image, 0, 0, null);
 				}
 			}

@@ -50,9 +50,9 @@ public class DavidsHighGoalVision {
 		markPixel((int)(finalX+0.5), (int)(finalY+0.5), colors);
 		toSend=colors;//fromBooleans(brightPixels);
 		
-		Window.displayPixels(colors, "name");
-		Window.displayPixels(asLuminance, "luminance");
-		Window.displayPixels(brightPixels, "brightPixels");
+		//Window.displayPixels(colors, "name");
+		//Window.displayPixels(asLuminance, "luminance");
+		//Window.displayPixels(brightPixels, "brightPixels");
 		calculateValues(finalX, finalY, brightPixels.length, brightPixels[0].length);
 	}
 	
