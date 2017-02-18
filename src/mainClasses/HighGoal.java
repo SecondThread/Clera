@@ -50,7 +50,7 @@ public class HighGoal {
 					System.out.println("Sending picture");
 					image=vision.getImage();
 					image=ImageProcessor.scaleImage(image, 134);
-					table.putBoolean("HighGoalVisionSucceeded", value);
+					table.putBoolean("HighGoalVisionSucceeded", vision.getVisionSucceeded());
 					table.putString("PictureHighGoal", ConvertToString.convertToString(image));
 					table.putBoolean("NeedPictureHighGoal", false);
 				}
