@@ -22,7 +22,7 @@ public class DriverStationClient {
 	private static JFrame frame;
 	private static JPanel mainPanel, outerPanel;
 	private static JButton visionToggle = new JButton();
-//	private static JLabel visionStatus = new JLabel();
+	// private static JLabel visionStatus = new JLabel();
 	private static boolean showHighGoalVision = false;
 
 	public static void main(String[] args) {
@@ -34,43 +34,47 @@ public class DriverStationClient {
 
 		visionToggle.setActionCommand("toggle");
 		visionToggle.setText("Toggle Vision Mode");
-		
-		
+
 		frame = new JFrame();
-		frame.addKeyListener(new KeyListener() {
+		outerPanel = new JPanel();
+
+		mainPanel = new JPanel();
+		outerPanel.add(mainPanel);
+		frame.add(outerPanel);
+		mainPanel.setPreferredSize(new Dimension(640, 480));
+		outerPanel.add(visionToggle);
+		// mainPanel.add(visionStatus);
+		frame.pack();
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		outerPanel.requestFocus();
+		outerPanel.addKeyListener(new KeyListener() {
+
 			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				
+				System.out.println(e.getKeyCode() + "button pressed");
+				if (e.getKeyCode() == KeyEvent.VK_S) {
+					showHighGoalVision = !showHighGoalVision;
+				}
+
+			}
+
 			@Override
 			public void keyTyped(KeyEvent e) {
 				// TODO Auto-generated method stub
 				
 			}
-			
+
 			@Override
 			public void keyReleased(KeyEvent e) {
 				// TODO Auto-generated method stub
 				
 			}
-			
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode() == KeyEvent.VK_S) {
-					showHighGoalVision = !showHighGoalVision;
-				}
-				
-			}
 		});
-		mainPanel = new JPanel();
-		outerPanel=new JPanel();
-		frame.add(outerPanel);
-		outerPanel.add(mainPanel);
-		mainPanel.setPreferredSize(new Dimension(640, 480));
-		outerPanel.add(visionToggle);
-//		mainPanel.add(visionStatus);
-		frame.pack();
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+
 		visionToggle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("button pressed");
@@ -81,7 +85,7 @@ public class DriverStationClient {
 		System.out.println("Entering loop on Drivers station...");
 		while (true) {
 			if (showHighGoalVision) {
-//				visionStatus.setText("Showing High Goal Vision");
+				// visionStatus.setText("Showing High Goal Vision");
 				System.out.println("Showing Peg Vision");
 				if (!table.getBoolean("NeedPicture", true)) {
 					String pictureAsString = table.getString("Picture");
@@ -101,7 +105,7 @@ public class DriverStationClient {
 				}
 			} else {
 				System.out.println("Showing High Goal Vision");
-//				visionStatus.setText("Showing Peg Vision");
+				// visionStatus.setText("Showing Peg Vision");
 				if (!table.getBoolean("NeedPictureHighGoal", true)) {
 					String pictureAsString = table.getString("PictureHighGoal");
 					table.putBoolean("NeedPictureHighGoal", true);

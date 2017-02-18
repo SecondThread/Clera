@@ -46,6 +46,7 @@ public class DavidsHighGoalVision {
 				break;
 			}
 		}
+		visionSucceeded=visionSucceeded&&getRatioIsRight(brightPixels, (int)finalX, (int)finalY);
 		
 		markPixel((int)(finalX+0.5), (int)(finalY+0.5), colors);
 		toSend=colors;//fromBooleans(brightPixels);
@@ -111,5 +112,14 @@ public class DavidsHighGoalVision {
 			}
 		}
 		return toReturn;
+	}
+	
+	private boolean getRatioIsRight(boolean[][] brightPoints, int x, int y) {
+		int y2, y3, y4;
+		for (y2=y+1; y2<brightPoints[x].length&&brightPoints[x][y2]; y2++);
+		for (y3=y2; y3<brightPoints[x].length&&!brightPoints[x][y3]; y3++);
+		for (y4=y3+1; y4<brightPoints[x].length&&brightPoints[x][y4]; y4++);
+		double ratio=(y2-y)/(y4-y3);//ration should be about 2
+		return ratio<4&&ratio>0.5;
 	}
 }
