@@ -10,7 +10,8 @@ import robot.Window;
 public class DavidsHighGoalVision {
 	
 	private static final int MIN_PIXELS_IN_HIGHEST_ROW=5;
-	private static final double HORIZONTAL_FOV=50, HEIGHT_OF_CAMERA_INCHES=10, HEIGHT_OF_TOP_STRIP_INCHES=70, ANGLE_OF_CAMERA_FROM_HORIZONTAL=20;
+	private static final double HORIZONTAL_FOV=50, HEIGHT_OF_CAMERA_INCHES=18.5, HEIGHT_OF_TOP_STRIP_INCHES=87, 
+			ANGLE_OF_CAMERA_FROM_HORIZONTAL=34.871;//degrees
 	
 	private Color[][] toSend;
 	private double degreesToTurn, distanceFromTarget;
@@ -84,7 +85,8 @@ public class DavidsHighGoalVision {
 		double heightOfStripAboveCamera=HEIGHT_OF_TOP_STRIP_INCHES-HEIGHT_OF_CAMERA_INCHES;
 		double angleFromTopOfScreen=yOnScreen/screenHeight*verticleFOV;
 		double angleToHighGoal=verticleFOV/2-angleFromTopOfScreen+ANGLE_OF_CAMERA_FROM_HORIZONTAL;
-		distanceFromTarget=heightOfStripAboveCamera/Math.tan(angleToHighGoal);		
+		distanceFromTarget=heightOfStripAboveCamera/Math.tan(Math.toRadians(angleToHighGoal));
+		System.out.println(distanceFromTarget+" "+verticleFOV+" "+heightOfStripAboveCamera+" "+angleFromTopOfScreen+" "+angleToHighGoal);
 	}
 	
 	public double getDegreesToTurn() {
