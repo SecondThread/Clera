@@ -1,3 +1,11 @@
-/mainClasses/
-/highGoalVision/
 /compression/
+/game/
+/highGoalVision/
+/images/
+/mainClasses/
+/pegVision/
+/physics/
+/processing/
+/robot/
+/saving/
+/templateMatching/

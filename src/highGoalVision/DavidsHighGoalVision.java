@@ -11,7 +11,7 @@ public class DavidsHighGoalVision {
 	
 	private static final int MIN_PIXELS_IN_HIGHEST_ROW=5;
 	private static final double HORIZONTAL_FOV=50, HEIGHT_OF_CAMERA_INCHES=18.5, HEIGHT_OF_TOP_STRIP_INCHES=87, 
-			ANGLE_OF_CAMERA_FROM_HORIZONTAL=34.871;//degrees
+			ANGLE_OF_CAMERA_FROM_HORIZONTAL=36;//degrees
 	
 	private Color[][] toSend;
 	private double degreesToTurn, distanceFromTarget;

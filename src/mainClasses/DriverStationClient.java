@@ -32,6 +32,12 @@ public class DriverStationClient {
 		NetworkTable table = NetworkTable.getTable("VisionTable");
 		table.putBoolean("NeedPicture", true);
 		table.putBoolean("NeedPictureHighGoal", true);
+		
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
 
 		visionToggle.setActionCommand("toggle");
 		visionToggle.setText("Toggle Vision Mode");
@@ -78,8 +84,13 @@ public class DriverStationClient {
 
 		visionToggle.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("button pressed");
+				//System.out.println("button pressed");
 				showHighGoalVision = !showHighGoalVision;
+				if (showHighGoalVision) {
+					System.out.println("Showing Peg Vision");
+				}else{
+					System.out.println("Showing High Goal Vision");
+				}
 			}
 		});
 
@@ -87,7 +98,6 @@ public class DriverStationClient {
 		while (true) {
 			if (showHighGoalVision) {
 				// visionStatus.setText("Showing High Goal Vision");
-				System.out.println("Showing Peg Vision");
 				if (!table.getBoolean("NeedPicture", true)) {
 					String pictureAsString = table.getString("Picture");
 					table.putBoolean("NeedPicture", true);
@@ -101,11 +111,10 @@ public class DriverStationClient {
 							image.setRGB(x, y, imageAsColors[x][y].getRGB());
 						}
 					}
-					System.out.println("Displaying Low picture");
+					//System.out.println("Displaying Low picture");
 					mainPanel.getGraphics().drawImage(image, 0, 0, null);
 				}
 			} else {
-				System.out.println("Showing High Goal Vision");
 				// visionStatus.setText("Showing Peg Vision");
 				if (!table.getBoolean("NeedPictureHighGoal", true)) {
 					String pictureAsString = table.getString("PictureHighGoal");
@@ -120,7 +129,7 @@ public class DriverStationClient {
 							image.setRGB(x, y, imageAsColors[x][y].getRGB());
 						}
 					}
-					System.out.println("Displaying High picture");
+					//System.out.println("Displaying High picture");
 					mainPanel.getGraphics().drawImage(image, 0, 0, null);
 				}
 			}
