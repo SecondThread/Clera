@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.ds.v4l4j.V4l4jDriver;
 
 import compression.ConvertToString;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
@@ -14,8 +15,6 @@ import processing.ImageProcessor;
 import processing.ImageSearchingThread;
 import processing.PegVisionUtils;
 import processing.TurnAngle;
-import robot.Window;
-import com.github.sarxos.webcam.ds.v4l4j.V4l4jDriver;
 
 
 public class PiClient {
@@ -98,9 +97,21 @@ public class PiClient {
 		ImageProcessor.normalize(luminance);
 		ImageProcessor.applyExponentialCurve(luminance, 3);
 
-		bestPoints = new ArrayList<Point>();
-		bestPoints = runThreads(luminance);
-		Window.displayPixels(luminance, "picture");
+		//bestPoints = new ArrayList<Point>();
+		//bestPoints = runThreads(luminance);
+		boolean[][] brightPoints=ImageProcessor.applyCutoff(0.6f, true, luminance);
+		int min=Integer.MAX_VALUE;
+		int max=0;
+		for (int y=0; y<brightPoints[0].length; y++) {
+			for (int x=0; x<brightPoints.length; x++) {
+				if (brightPoints[x][y]) {
+					min=Math.min(min, x);
+					max=Math.max(max, x);
+				}
+			}
+		}
+		
+		/*Window.displayPixels(luminance, "picture");
 		// null if points are wrong
 		if (bestPoints==null) {
 			if (runCounter>=3) {
@@ -113,8 +124,9 @@ public class PiClient {
 		Window.saveImage(luminance, bestPoints, "result.png");
 
 		Point peg=PegVisionUtils.findPeg(bestPoints);
-		distance=PegVisionUtils.calcDistance(bestPoints);
-		return TurnAngle.getTurnAngle(peg);
+		distance=PegVisionUtils.calcDistance(bestPoints);*/
+		distance=0;
+		return TurnAngle.getTurnAngle(new Point((max+min)/2, 0));
 	}
 
 	public static float getShooterDegreesToTurn(int runCounter, BufferedImage shooterImage) {
