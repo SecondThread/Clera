@@ -17,7 +17,12 @@ public class ImageSearchingThread implements Runnable {
 	}
 	
 	public void run() {
-		bestPoints=getBestPoints(template, image);
+		try {
+			bestPoints=getBestPoints(template, image);
+		}
+		catch(Exception e) {
+			bestPoints=new ArrayList<>();
+		}
 		done=true;
 	}
 	

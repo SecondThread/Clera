@@ -11,5 +11,7 @@
 			<attribute name="javadoc_location" value="file:/C:/Users/David/Documents/JavaFiles/Clera/libraries/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="libraries/v4l4j-0.9.1-r507.jar"/>
+	<classpathentry kind="lib" path="libraries/webcam-capture-driver-v4l4j-0.3.11.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

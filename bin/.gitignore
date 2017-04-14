@@ -1,10 +1,11 @@
-/PiClient.class
 /compression/
 /game/
+/highGoalVision/
 /images/
+/mainClasses/
+/pegVision/
 /physics/
 /processing/
 /robot/
 /saving/
 /templateMatching/
-/DriverStationClient.class

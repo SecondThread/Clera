@@ -1,4 +1,4 @@
-package processing;
+package compression;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -26,13 +26,13 @@ public class BillyTesterMain {
 			}
 		}
 		long startTime = System.nanoTime();
-		Window.displayPixels(asColors, "Original");
+		// Window.displayPixels(asColors, "Original");
 		long endTime1 = System.nanoTime();
 		System.out.println("Original Displayed: " + TimeUnit.NANOSECONDS.toMillis(endTime1 - startTime));
-		String colors = ImageProcessor.convertToString(asColors);
+		String colors = ConvertToString.convertToString(asColors);
 		long endTime2 = System.nanoTime();
 		System.out.println("Converted to String: " + TimeUnit.NANOSECONDS.toMillis(endTime2 - startTime));
-		Color[][] processedImage = ImageProcessor.convertToColorArray(colors);
+		Color[][] processedImage = ConvertToString.convertBack(colors);
 		long endTime3 = System.nanoTime();
 		System.out.println("Converted back to Color[][]: " + TimeUnit.NANOSECONDS.toMillis(endTime3 - startTime));
 		Window.displayPixels(processedImage, "Processed");
