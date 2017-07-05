@@ -15,7 +15,7 @@ import templateMatching.TemplateSaver;
 //RUN THIS SECOND
 public class Main implements Runnable{
 	private static boolean setupPicturePosition=false, editTemplates=false;
-	public static boolean useSameWindow=false;
+	public static boolean useSameWindow=true;
 	
 	public static final String topLeftTemplatesLocation="templates.txt", topRightTemplatesLocation="templatesTR.txt",
 					bottomRightTemplatesLocation="templatesBR.txt", bottomLeftTemplatesLocation="templatesBL.txt";
